@@ -4,6 +4,7 @@ Data hentes fra Klippens gæste-app (https://therns.dk/app/gudhjem.json), som hv
 Klippens egne steder og events, film i Scala, svømmehallens kalender, byens arrangementer
 (kirke, museer m.m.) og åbningstider for spisesteder. Køres af GitHub Actions hver nat.
 """
+import shutil
 import json, html, datetime, urllib.request, pathlib, re
 from zoneinfo import ZoneInfo
 
@@ -277,8 +278,12 @@ def render_day(x, i):
     h.append("</section>")
     return "\n".join(h)
 
+SITENAME = {"da": "Det sker i Gudhjem", "en": "What's on in Gudhjem", "de": "Was ist los in Gudhjem", "sv": "Det händer i Gudhjem"}
+
 def jsonld(days):
-    evs = []
+    evs = [{"@type": "WebSite", "name": SITENAME[LANG], "url": "https://detskerigudhjem.dk/" + LANG_PATH[LANG], "inLanguage": LANG,
+            "publisher": {"@type": "Hotel", "name": "Klippen Hotel", "url": "https://www.hotelklippen.com/",
+                          "address": {"@type": "PostalAddress", "addressLocality": "Gudhjem", "postalCode": "3760", "addressCountry": "DK"}}}]
     for x in days:
         for it in x["items"]:
             if it["s"] < 0 or it["kind"] == "film":
@@ -288,7 +293,7 @@ def jsonld(days):
             evs.append({"@type": "Event", "name": it["title"], "startDate": start, "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                         "location": {"@type": "Place", "name": it["where"] or "Gudhjem", "address": {"@type": "PostalAddress", "addressLocality": "Gudhjem", "postalCode": "3760", "addressCountry": "DK"}},
                         **({"url": it["url"]} if it["url"] else {})})
-    return json.dumps({"@context": "https://schema.org", "@graph": evs[:60]}, ensure_ascii=False)
+    return json.dumps({"@context": "https://schema.org", "@graph": evs[:61]}, ensure_ascii=False)
 
 # skabelonens tekster: dansk → [en, de, sv]
 TPL = [
@@ -355,11 +360,14 @@ def main():
         upd = f"{mon_[today.month - 1]} {today.day}, {today.year}" if LANG == "en" else f"{today.day}. {mon_[today.month - 1]} {today.year}"
         out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days))
                   .replace("{{UPDATED}}", upd).replace("{{BOOK}}", BOOK_URL[LANG]).replace("{{PATH}}", LANG_PATH[LANG])
-                  .replace("{{HREFLANG}}", hreflang).replace("{{LANGS}}", langs).replace("{{TODAY}}", L("I dag")).replace("{{TOMORROW}}", L("I morgen")))
+                  .replace("{{HREFLANG}}", hreflang).replace("{{LANGS}}", langs).replace("{{TODAY}}", L("I dag")).replace("{{TOMORROW}}", L("I morgen"))
+                  .replace("{{SITENAME}}", SITENAME[LANG].replace('"', "&quot;")).replace("{{LANGCODE}}", LANG))
         d = site / LANG_PATH[LANG]; d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(out, encoding="utf-8")
         total += sum(len(x["items"]) for x in days)
     LANG = "da"
+    for f in (ROOT / "static").glob("*"):
+        shutil.copy(f, site / f.name)
     (site / "CNAME").write_text("detskerigudhjem.dk\n", encoding="utf-8")
     (site / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: https://detskerigudhjem.dk/sitemap.xml\n", encoding="utf-8")
     urls = "".join(f'<url><loc>https://detskerigudhjem.dk/{LANG_PATH[l]}</loc><lastmod>{today.isoformat()}</lastmod><changefreq>daily</changefreq></url>' for l in LANGS)
