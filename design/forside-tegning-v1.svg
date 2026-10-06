@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="town" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Tegning af Gudhjem: huse med røde tage ned ad klippen, kirken, røgeriets skorstene og havnen">
+    <circle cx="1010" cy="70" r="46" fill="#f2c46b" opacity=".75"/>
+    <!-- klippe og bakke -->
+    <path d="M0 150 C120 120 210 96 330 104 C430 110 500 70 600 82 C700 94 760 140 860 150 C960 160 1080 150 1200 170 L1200 300 L0 300Z" fill="#b7c4b4"/>
+    <path d="M0 196 C140 170 260 160 380 172 C520 186 600 150 740 168 C860 184 980 196 1200 204 L1200 300 L0 300Z" fill="#8e9f8b"/>
+    <!-- kirken -->
+    <g transform="translate(520 50)"><rect x="0" y="40" width="70" height="40" fill="#f6f3ec"/><rect x="58" y="10" width="26" height="70" fill="#f6f3ec"/><path d="M54 12 L71 -14 L88 12Z" fill="#3e4a47"/><path d="M-4 42 L35 20 L74 42Z" fill="#b4533a"/><rect x="66" y="30" width="10" height="14" rx="5" fill="#8e9f8b"/></g>
+    <!-- huse -->
+    <g>
+      <g transform="translate(210 110)"><rect width="64" height="44" fill="#f6f3ec"/><path d="M-6 2 L32 -24 L70 2Z" fill="#e37b5b"/><rect x="12" y="16" width="10" height="12" fill="#3f6670"/><rect x="40" y="16" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(300 128)"><rect width="78" height="40" fill="#f2dfa8"/><path d="M-6 2 L39 -22 L84 2Z" fill="#b4533a"/><rect x="14" y="14" width="10" height="12" fill="#3f6670"/><rect x="50" y="14" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(400 112)"><rect width="56" height="46" fill="#f6f3ec"/><path d="M-6 2 L28 -22 L62 2Z" fill="#e37b5b"/><rect x="22" y="18" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(640 120)"><rect width="70" height="44" fill="#f6f3ec"/><path d="M-6 2 L35 -24 L76 2Z" fill="#b4533a"/><rect x="12" y="16" width="10" height="12" fill="#3f6670"/><rect x="46" y="16" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(730 140)"><rect width="60" height="38" fill="#f2dfa8"/><path d="M-6 2 L30 -20 L66 2Z" fill="#e37b5b"/><rect x="24" y="14" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(120 140)"><rect width="56" height="38" fill="#f6f3ec"/><path d="M-6 2 L28 -20 L62 2Z" fill="#b4533a"/><rect x="22" y="14" width="10" height="12" fill="#3f6670"/></g>
+    </g>
+    <!-- røgeriets skorstene -->
+    <g transform="translate(860 96)" fill="#f6f3ec"><path d="M0 70 L8 0 L22 0 L30 70Z"/><path d="M36 70 L44 6 L58 6 L66 70Z"/><path d="M72 70 L80 12 L94 12 L102 70Z"/><rect x="-10" y="66" width="122" height="34"/><path d="M8 0 C2 -18 26 -24 18 -40" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".8"/></g>
+    <!-- hav og havn -->
+    <path d="M0 236 C200 226 400 240 600 232 C800 224 1000 238 1200 230 L1200 300 L0 300Z" fill="#c6d8d9"/>
+    <path d="M560 238 L760 238 L760 248 L560 248Z" fill="#8e9f8b"/>
+    <g fill="none" stroke="#3f6670" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M80 262 q14 -8 28 0 t28 0"/><path d="M330 276 q14 -8 28 0 t28 0"/><path d="M880 268 q14 -8 28 0 t28 0"/><path d="M1080 284 q14 -8 28 0 t28 0"/></g>
+    <g transform="translate(640 250)"><path d="M0 10 L60 10 L50 22 L8 22Z" fill="#b4533a"/><rect x="26" y="-14" width="4" height="24" fill="#302f2f"/><path d="M30 -12 L48 6 L30 6Z" fill="#f6f3ec"/></g>
+  </svg>
