@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Det sker i Gudhjem – i dag og de næste dage</title>
+<meta name="description" content="Hvad sker der i Gudhjem i dag? Film i Scala, koncerter og gudstjenester, museer, svømmehal, børneaktiviteter og spisesteder med åbent – samlet og opdateret hver dag.">
+<link rel="canonical" href="https://detskerigudhjem.dk/">
+<meta property="og:title" content="Det sker i Gudhjem">
+<meta property="og:description" content="Byens kalender: film, koncerter, museer, svømmehal og spisesteder – opdateret hver dag.">
+<meta property="og:url" content="https://detskerigudhjem.dk/">
+<meta property="og:locale" content="da_DK">
+<meta name="theme-color" content="#eaf0ef">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1140 520'%3E%3Cpolyline fill='none' stroke='%23b4533a' stroke-width='70' stroke-linejoin='round' points='500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;700&display=swap">
+<script type="application/ld+json">{{JSONLD}}</script>
+<style>
+/* Det sker i Gudhjem: havdis-baggrund, skifer-tekst, Østersø-blå links; Klippens egne ting i klippe-rød */
+:root{
+  --hav:#eaf0ef; --papir:#f7faf9; --ink:#1f2b2d; --muted:#56635f; --line:#cdd8d5;
+  --sea:#1f5f6b; --klippe:#b4533a; --sol:#e8b04b;
+  --serif:"Young Serif", Georgia, serif; --sans:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:64px}
+body{margin:0;background:var(--hav);color:var(--ink);font:400 17px/1.5 var(--sans)}
+a{color:var(--sea);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--klippe);outline-offset:2px;border-radius:2px}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+
+header.top{padding:40px 0 18px}
+header.top h1{font:400 clamp(2.3rem,8vw,3.6rem)/1.02 var(--serif);margin:0;letter-spacing:-.01em}
+header.top p{margin:12px 0 0;max-width:34em;color:var(--muted)}
+.by{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:.9rem;color:var(--muted)}
+.by a{color:var(--klippe);font-weight:500}
+
+nav.days{position:sticky;top:0;z-index:5;background:var(--hav);border-bottom:1px solid var(--line);margin:0 -16px;padding:10px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.days::-webkit-scrollbar{display:none}
+nav.days a{flex:0 0 auto;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--papir);color:var(--ink);text-decoration:none;font-size:.92rem;font-weight:500}
+nav.days a.on{background:var(--ink);border-color:var(--ink);color:var(--papir)}
+
+.day{padding:30px 0 10px;border-bottom:1px solid var(--line)}
+.day h2{margin:0 0 16px;font-weight:400;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.day .big{font:400 clamp(2rem,7vw,2.8rem)/1 var(--serif)}
+.day .date{font-size:1rem;color:var(--muted)}
+
+/* tidslinjen: klokkeslæt i venstre kolonne */
+.times,.klippen ul,.food ul{list-style:none;margin:0;padding:0}
+.times li,.klippen li,.food li{display:grid;grid-template-columns:6.6em 1fr;gap:4px 14px;padding:9px 0;border-top:1px solid var(--line)}
+.times li:first-child{border-top:0}
+.t{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);white-space:nowrap}
+.what b{font-weight:500}
+.what b a{color:var(--ink);text-decoration-color:var(--line)}
+.what b a:hover{color:var(--sea)}
+.where{color:var(--muted)}
+li.past{opacity:.45}
+li.now .t::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sol);margin-right:6px;vertical-align:1px}
+
+.klippen{border-left:3px solid var(--klippe);padding:2px 0 2px 14px;margin:0 0 18px}
+.klippen .who{margin:0 0 4px;display:flex;align-items:center;gap:8px;color:var(--klippe);font-weight:700;font-size:.95rem}
+.bird{width:30px;height:14px;fill:none;stroke:var(--klippe);stroke-width:60;stroke-linejoin:round}
+.klippen li{border-top:1px solid color-mix(in srgb,var(--klippe) 18%,transparent)}
+.klippen li:first-of-type{border-top:0}
+.klippen li.own .t{color:var(--klippe)}
+
+.open{margin:14px 0 4px;padding:12px 14px;background:var(--papir);border-radius:10px;display:grid;gap:6px;font-size:.95rem}
+.open p{margin:0}
+.open b{font-weight:700;margin-right:4px}
+.quiet{color:var(--muted)}
+
+.food{margin:12px 0 6px}
+.food summary{cursor:pointer;color:var(--sea);font-weight:500;padding:6px 0}
+.food li{grid-template-columns:1fr auto}
+.food small{display:block;color:var(--muted)}
+
+footer{padding:34px 0 60px;display:grid;gap:22px;color:var(--muted);font-size:.95rem}
+.stay{background:var(--ink);color:var(--papir);border-radius:14px;padding:22px}
+.stay h2{font:400 1.6rem/1.15 var(--serif);margin:0 0 8px;color:var(--papir)}
+.stay p{margin:0 0 14px;color:#d6e0de}
+.stay a.btn{display:inline-block;background:var(--klippe);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+footer h3{font:700 1rem var(--sans);color:var(--ink);margin:0 0 4px}
+footer p{margin:0}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  .times li,.klippen li{grid-template-columns:6.4em 1fr;gap:2px 10px}
+  .t{font-size:.9rem}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <h1>Det sker i Gudhjem</h1>
+  <p>Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.</p>
+  <p class="by"><svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem</p>
+</header>
+<nav class="days" aria-label="Vælg dag">{{NAV}}</nav>
+<main>
+{{DAYS}}
+</main>
+<footer>
+  <div class="stay">
+    <h2>Bo midt i det hele</h2>
+    <p>Klippen Hotel har tre små hoteller i Gudhjem: Grevens Dal på klipperne, Therns midt i byen og Skt. Jørgens Gaard ved havnen.</p>
+    <a class="btn" href="{{BOOK}}">Se værelser hos Klippen</a>
+  </div>
+  <div>
+    <h3>Har du et arrangement i Gudhjem?</h3>
+    <p>Skriv til <a href="mailto:info@hotelklippen.dk?subject=Arrangement%20til%20Det%20sker%20i%20Gudhjem">info@hotelklippen.dk</a> med dato, tid og sted, så kommer det med.</p>
+  </div>
+  <div>
+    <h3>Hvor kommer oplysningerne fra?</h3>
+    <p>Film fra <a href="http://www.scalagudhjem.dk/">Scala Gudhjem</a>, svømmetider fra <a href="https://gudhjemsvoemmehal.dk/">Gudhjem Svømmehal</a>, arrangementer fra <a href="https://www.kultunaut.dk/">KultuNaut</a>, <a href="https://sogn.dk/gudhjem/kalender">Gudhjem Sogn</a> og museernes egne sider. Åbningstider kan ændre sig – tjek gerne stedets egen side. Opdateret {{UPDATED}}.</p>
+  </div>
+</footer>
+</div>
+<script>
+/* Holder siden rigtig, selvom den er bygget i nat: skjuler dage der er gået, retter "I dag/I morgen" og toner det, der er slut i dag */
+(function(){
+  const p = new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Copenhagen",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+  const g = t => p.find(x => x.type === t).value;
+  const today = `${g("year")}-${g("month")}-${g("day")}`, min = (+g("hour") % 24) * 60 + +g("minute");
+  const days = [...document.querySelectorAll(".day")];
+  let first = null;
+  days.forEach(s => { if (s.dataset.date < today) { s.remove(); document.querySelector(`nav.days a[data-date="${s.dataset.date}"]`)?.remove(); } else if (!first) first = s; });
+  const rest = [...document.querySelectorAll(".day")];
+  rest.forEach((s, i) => {
+    const big = s.querySelector(".big"), date = s.querySelector(".date"), nav = document.querySelector(`nav.days a[data-date="${s.dataset.date}"]`);
+    if (+big.dataset.rel !== i && i < 2) { if (!date.textContent) date.textContent = big.textContent.toLowerCase(); big.textContent = i ? "I morgen" : "I dag"; if (nav) nav.textContent = big.textContent; }
+  });
+  if (first && first.dataset.date === today) first.querySelectorAll("li[data-end]").forEach(li => {
+    const end = +li.dataset.end, t = li.querySelector(".t")?.textContent || "", m = t.match(/^(\d{1,2})(?:\.(\d{2}))?/);
+    if (end && end <= min) li.classList.add("past");
+    else if (m && (+m[1] * 60 + +(m[2] || 0)) <= min) li.classList.add("now");
+  });
+  const links = [...document.querySelectorAll("nav.days a")];
+  const mark = id => links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + id));
+  if (rest[0]) mark(rest[0].id);
+  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && mark(e.target.id)), { rootMargin: "-40% 0px -55% 0px" });
+  rest.forEach(s => io.observe(s));
+})();
+</script>
+</body>
+</html>
