@@ -31,25 +31,26 @@ o.append('<g transform="translate(346 108)"><rect x="0" y="30" width="70" height
 
 # Mange huse op ad bakken (bagerste række først)
 o.append('<g>')
-back = [(420,170,46,32,"#f6f3ec","#e37b5b",1),(476,160,50,34,"#f2dfa8","#b4533a",2),(534,150,44,30,"#f6f3ec","#e37b5b",1),(586,160,48,32,"#efe3c8","#e37b5b",1),(640,168,46,32,"#f6f3ec","#b4533a",1),(694,176,44,30,"#f2dfa8","#e37b5b",1)]
-mid = [(440,206,50,34,"#f2dfa8","#e37b5b",2),(500,198,46,32,"#f6f3ec","#b4533a",1),(556,194,52,36,"#efe3c8","#e37b5b",2),(616,200,46,32,"#f6f3ec","#e37b5b",1),(668,208,44,30,"#f2dfa8","#b4533a",1)]
-front = [(468,240,48,32,"#f6f3ec","#e37b5b",1),(526,236,44,30,"#f2dfa8","#e37b5b",1),(580,240,48,32,"#f6f3ec","#b4533a",1),(636,244,44,30,"#efe3c8","#e37b5b",1)]
+back = [(420,170,46,32,"#f6f3ec","#e37b5b",1),(500,160,50,34,"#f2dfa8","#b4533a",2),(584,156,46,32,"#efe3c8","#e37b5b",1),(668,164,46,32,"#f6f3ec","#b4533a",1)]
+mid = [(444,206,50,34,"#f2dfa8","#e37b5b",2),(536,200,46,32,"#f6f3ec","#b4533a",1)]
+front = [(476,242,48,32,"#f6f3ec","#e37b5b",1),(566,240,46,30,"#efe3c8","#e37b5b",1)]
 for row in (back, mid, front):
     for x,b,w,h,wall,roof,n in row:
         o.append(house(x,b,w,h,wall,roof,n))
 o.append('</g>')
 
 # Therns – hvidt hus i to etager i Brøddegade, med Førder (gult) lige ved siden af
-o.append('<g transform="translate(716 168)"><rect x="0" y="0" width="76" height="62" fill="#ffffff"/><path d="M-6 2 L38 -30 L82 2Z" fill="#b4533a"/>'
-         f'<g fill="{WIN}"><rect x="12" y="12" width="12" height="13"/><rect x="52" y="12" width="12" height="13"/><rect x="12" y="38" width="12" height="13"/><rect x="52" y="38" width="12" height="13"/></g>'
-         '<rect x="32" y="38" width="12" height="24" fill="#7a5c45"/></g>')
-o.append('<g transform="translate(800 186)"><rect x="0" y="0" width="56" height="44" fill="#f2dfa8"/><path d="M-5 2 L28 -22 L61 2Z" fill="#b4533a"/>'
+o.append('<g transform="translate(616 168)"><rect x="0" y="0" width="152" height="62" fill="#ffffff"/><path d="M-6 2 L22 -30 L130 -30 L158 2Z" fill="#b4533a"/>'
+         f'<g fill="{WIN}"><rect x="14" y="12" width="12" height="13"/><rect x="44" y="12" width="12" height="13"/><rect x="96" y="12" width="12" height="13"/><rect x="126" y="12" width="12" height="13"/>'
+         '<rect x="14" y="38" width="12" height="13"/><rect x="44" y="38" width="12" height="13"/><rect x="96" y="38" width="12" height="13"/><rect x="126" y="38" width="12" height="13"/><rect x="70" y="12" width="12" height="13"/></g>'
+         '<rect x="70" y="38" width="12" height="24" fill="#7a5c45"/></g>')
+o.append('<g transform="translate(776 186)"><rect x="0" y="0" width="56" height="44" fill="#f2dfa8"/><path d="M-5 2 L28 -22 L61 2Z" fill="#b4533a"/>'
          '<path d="M-3 14 L59 14 L56 25 L0 25Z" fill="#e37b5b"/><g fill="#fff"><path d="M8 14 L15 14 L14 25 L7 25Z"/><path d="M24 14 L31 14 L31 25 L24 25Z"/><path d="M40 14 L47 14 L48 25 L41 25Z"/></g>'
          f'<rect x="20" y="28" width="14" height="16" fill="{WIN}"/></g>')
 
 # Lidt flere huse
 o.append('<g>')
-for x,b,w,h,wall,roof,n in [(756,150,46,30,"#f6f3ec","#e37b5b",1),(812,160,44,30,"#efe3c8","#b4533a",1),(866,176,48,32,"#f6f3ec","#e37b5b",1),(872,222,46,32,"#f2dfa8","#e37b5b",1),(926,196,44,30,"#f6f3ec","#b4533a",1)]:
+for x,b,w,h,wall,roof,n in [(800,160,44,30,"#efe3c8","#b4533a",1),(852,196,46,32,"#f6f3ec","#e37b5b",1)]:
     o.append(house(x,b,w,h,wall,roof,n))
 o.append('</g>')
 
