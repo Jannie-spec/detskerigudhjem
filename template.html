@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Det sker i Gudhjem – i dag og de næste dage</title>
 <meta name="description" content="Hvad sker der i Gudhjem i dag? Film i Scala, koncerter og gudstjenester, museer, svømmehal, børneaktiviteter og spisesteder med åbent – samlet og opdateret hver dag.">
-<link rel="canonical" href="https://detskerigudhjem.dk/">
+<link rel="canonical" href="https://detskerigudhjem.dk/{{PATH}}">
+{{HREFLANG}}
 <meta property="og:title" content="Det sker i Gudhjem">
 <meta property="og:description" content="Byens kalender: film, koncerter, museer, svømmehal og spisesteder – opdateret hver dag.">
-<meta property="og:url" content="https://detskerigudhjem.dk/">
+<meta property="og:url" content="https://detskerigudhjem.dk/{{PATH}}">
 <meta property="og:locale" content="da_DK">
 <meta name="theme-color" content="#e5e9e1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1140 520'%3E%3Cpolyline fill='none' stroke='%23b4533a' stroke-width='70' stroke-linejoin='round' points='500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277'/%3E%3C/svg%3E">
@@ -36,6 +37,11 @@ a{color:var(--brick);text-underline-offset:3px;text-decoration-thickness:1px}
 .hero h1{font:400 clamp(2.6rem,10vw,4.6rem)/.95 var(--serif);margin:0;letter-spacing:-.015em;max-width:8em}
 .hero p{margin:14px 0 0;max-width:30em;color:#4a4d49;font-size:1.02rem}
 .by{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;color:var(--ink)}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.toprow .by.chip{margin:0}
+.langs{display:flex;gap:4px}
+.langs a{font-size:.82rem;font-weight:700;text-decoration:none;color:var(--muted);padding:5px 8px;border-radius:999px}
+.langs a[aria-current="true"]{background:#fff;color:var(--brick)}
 .by.chip{background:#fff;border-radius:999px;padding:6px 14px 6px 10px;margin:0 0 16px;box-shadow:0 1px 0 var(--line)}
 .by a{font-weight:700;text-decoration:none}
 .town{display:block;width:100%;height:auto;margin-top:4px}
@@ -98,6 +104,9 @@ main{padding:22px 0 10px;display:grid;gap:22px}
 .ic-mad{background:#f6e3da;color:var(--brick)}
 li.past{opacity:.4}
 li.now .t{color:var(--brick)}
+html[lang=en] li.now .t::after{content:"now"}
+html[lang=de] li.now .t::after{content:"jetzt"}
+html[lang=sv] li.now .t::after{content:"nu"}
 li.now .t::after{content:"nu";display:inline-block;margin-left:6px;font-size:.7rem;background:var(--sol);color:var(--ink);border-radius:999px;padding:1px 7px;vertical-align:2px}
 
 /* åbent denne dag */
@@ -141,10 +150,10 @@ footer p{margin:0}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
 </head>
-<body>
+<body data-today="{{TODAY}}" data-tomorrow="{{TOMORROW}}">
 <header class="hero">
   <div class="wrap">
-    <p class="by chip"><svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem</p>
+    <div class="toprow"><p class="by chip"><svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem</p><nav class="langs" aria-label="Sprog / Language">{{LANGS}}</nav></div>
     <h1>Det sker i Gudhjem</h1>
     <p>Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.</p>
   </div>
@@ -217,7 +226,7 @@ footer p{margin:0}
   const rest = [...document.querySelectorAll(".day")];
   rest.forEach((s, i) => {
     const big = s.querySelector(".big"), date = s.querySelector(".date"), nav = document.querySelector(`nav.days a[data-date="${s.dataset.date}"]`);
-    if (+big.dataset.rel !== i && i < 2) { if (!date.textContent) date.textContent = big.textContent.toLowerCase(); big.textContent = i ? "I morgen" : "I dag"; if (nav) nav.textContent = big.textContent; }
+    if (+big.dataset.rel !== i && i < 2) { if (!date.textContent) date.textContent = big.textContent.toLowerCase(); big.textContent = i ? document.body.dataset.tomorrow : document.body.dataset.today; if (nav) nav.textContent = big.textContent; }
   });
   if (first && first.dataset.date === today) first.querySelectorAll("li[data-end]").forEach(li => {
     const end = +li.dataset.end, t = li.querySelector(".t")?.textContent || "", m = t.match(/^(\d{1,2})(?:\.(\d{2}))?/);

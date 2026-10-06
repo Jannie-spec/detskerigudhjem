@@ -17,6 +17,46 @@ WD = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"]
 WD_SHORT = ["man", "tir", "ons", "tor", "fre", "lør", "søn"]
 MON = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"]
 MUSEUMS = ["kunst", "host", "gmus", "melg"]
+LANGS = ["da", "en", "de", "sv"]
+LANG = "da"
+DTR = {}   # appens oversættelser (fra gudhjem.json)
+DAYNAMES = {
+    "da": (WD, WD_SHORT, MON),
+    "en": (["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], ["January","February","March","April","May","June","July","August","September","October","November","December"]),
+    "de": (["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"], ["Mo","Di","Mi","Do","Fr","Sa","So"], ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]),
+    "sv": (["måndag","tisdag","onsdag","torsdag","fredag","lördag","söndag"], ["mån","tis","ons","tor","fre","lör","sön"], ["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"]),
+}
+# sidens egne tekster [en, de, sv]
+U = {
+    "Hele dagen": ["All day", "Ganztägig", "Hela dagen"],
+    "Familiesvømning med vipper og legeredskaber": ["Family swim with diving boards and toys", "Familienschwimmen mit Sprungbrettern und Spielgeräten", "Familjesim med trampoliner och lekredskap"],
+    "Svømmehallen": ["Swimming pool", "Schwimmhalle", "Simhallen"],
+    "Lukket": ["Closed", "Geschlossen", "Stängt"],
+    "Åbent denne dag": ["Open this day", "An diesem Tag geöffnet", "Öppet denna dag"],
+    "Spisesteder og is med åbent": ["Restaurants and ice cream open", "Geöffnete Restaurants und Eis", "Matställen och glass som har öppet"],
+    "Ingen arrangementer i kalenderen endnu.": ["Nothing in the calendar yet.", "Noch nichts im Kalender.", "Inget i kalendern ännu."],
+    "Hos Klippen": ["At Klippen", "Bei Klippen", "Hos Klippen"],
+    "I dag": ["Today", "Heute", "I dag"], "I morgen": ["Tomorrow", "Morgen", "I morgon"],
+    "Kunstmuseet": ["Art Museum", "Kunstmuseum", "Konstmuseet"],
+    "Film": ["Film", "Film", "Film"], "Svømning": ["Swimming", "Schwimmen", "Simning"], "Kirke": ["Church", "Kirche", "Kyrka"],
+    "Musik": ["Music", "Musik", "Musik"], "Børn og familie": ["Children and family", "Kinder und Familie", "Barn och familj"],
+    "Foredrag": ["Talk", "Vortrag", "Föredrag"], "Kunst og kultur": ["Art and culture", "Kunst und Kultur", "Konst och kultur"],
+    "Mad og drikke": ["Food and drink", "Essen und Trinken", "Mat och dryck"], "Arrangement": ["Event", "Veranstaltung", "Evenemang"],
+    "Biograf": ["Cinema", "Kino", "Bio"],
+}
+
+def L(s):
+    """Oversæt en dansk tekst til sidens sprog (sidens egne tekster, ellers appens oversættelser)."""
+    if LANG == "da" or not s:
+        return s
+    i = LANGS.index(LANG) - 1
+    if s in U: return U[s][i]
+    if s in DTR: return DTR[s][i]
+    return s
+
+def kl(t):
+    return ("kl. " if LANG in ("da", "sv") else "") + hm(t) + (" Uhr" if LANG == "de" else "")
+
 MUS_SHORT = {"kunst": "Kunstmuseet", "host": "Oluf Høst Museet", "gmus": "Gudhjem Museum", "melg": "Melstedgård"}
 
 
@@ -41,6 +81,8 @@ def tmin(s):
 def hm(s):
     s = s.replace(".", ":")
     h, m = s.split(":")
+    if LANG in ("en", "de"):
+        return f"{int(h)}:{m}"
     return str(int(h)) if m == "00" else f"{int(h)}.{m}"
 
 def span(sl):
@@ -114,11 +156,11 @@ def build_day(D, d, places):
     for key, pid in (("plateau", "plat"), ("jylkat", "jyl")):
         v = V[key]; sl = slots_on(v, d)
         if sl:
-            klippen.append({"name": v["name"], "where": v["where"], "hours": span(sl), "url": v.get("url"), "end": max(tmin(b) for _, b in sl)})
+            klippen.append({"name": L(v["name"]), "where": L(v["where"]), "hours": span(sl), "url": v.get("url"), "end": max(tmin(b) for _, b in sl)})
     own = []
     for e in sorted(D.get("events", []), key=lambda e: e.get("time") or ""):
         if e["date"] <= iso <= (e.get("to") or e["date"]):
-            own.append({"title": e["title"], "where": e.get("where", ""), "time": ("kl. " + hm(e["time"])) if e.get("time") else "", "text": e.get("text", ""), "url": e.get("url")})
+            own.append({"title": L(e["title"]), "where": L(e.get("where", "")), "time": kl(e["time"]) if e.get("time") else "", "text": L(e.get("text", "")), "url": e.get("url")})
     # I byen: events, film, svømmehal-events
     items = []
     for e in D.get("town", []):
@@ -128,12 +170,12 @@ def build_day(D, d, places):
             continue
         if e.get("t"):
             tt = hm(e["t"]) + (("–" + hm(e["t2"])) if e.get("t2") else "")
-            items.append(item(tmin(e["t"]), tt, e["title"], e.get("where", ""), e.get("url"), tmin(e.get("t2") or e["t"]) + (0 if e.get("t2") else 90), kind_of(e)))
+            items.append(item(tmin(e["t"]), tt, L(e["title"]), e.get("where", ""), e.get("url"), tmin(e.get("t2") or e["t"]) + (0 if e.get("t2") else 90), kind_of(e)))
         else:
-            items.append(item(-1, "Hele dagen", e["title"], e.get("where", ""), e.get("url"), None, kind_of(e)))
+            items.append(item(-1, L("Hele dagen"), L(e["title"]), e.get("where", ""), e.get("url"), None, kind_of(e)))
     for f in D.get("films", []):
         if f["d"] == iso:
-            items.append(item(tmin(f["t"]), hm(f["t"]), f["title"], "Scala Gudhjem, biograf", "http://www.scalagudhjem.dk/", tmin(f["t"]) + 30, "film"))
+            items.append(item(tmin(f["t"]), hm(f["t"]), f["title"], "Scala Gudhjem, " + L("Biograf").lower(), "http://www.scalagudhjem.dk/", tmin(f["t"]) + 30, "film"))
     pool_url = (places.get("svom") or {}).get("url")
     P = D.get("pool", [])
     pd = [x for x in P if x["d"] == iso] if P and iso <= P[-1]["d"] else None
@@ -146,7 +188,7 @@ def build_day(D, d, places):
             swim = span(sl) if sl else None
             for x in pd:
                 if x["k"] == "f":
-                    items.append(item(tmin(x["a"]), f"{hm(x['a'])}–{hm(x['b'])}", "Familiesvømning med vipper og legeredskaber", "Gudhjem Svømmehal", pool_url, tmin(x["b"]), "svom"))
+                    items.append(item(tmin(x["a"]), f"{hm(x['a'])}–{hm(x['b'])}", L("Familiesvømning med vipper og legeredskaber"), "Gudhjem Svømmehal", pool_url, tmin(x["b"]), "svom"))
                 elif x["k"] == "e":
                     items.append(item(tmin(x["a"]), f"{hm(x['a'])}–{hm(x['b'])}", x.get("title", "Arrangement"), "Gudhjem Svømmehal", pool_url, tmin(x["b"]), "svom"))
     else:
@@ -159,7 +201,7 @@ def build_day(D, d, places):
         p = places.get(mid)
         sl = slots_on(p, d)
         if p and sl:
-            mus.append({"name": MUS_SHORT[mid], "hours": span(sl), "url": p.get("url")})
+            mus.append({"name": L(MUS_SHORT[mid]), "hours": span(sl), "url": p.get("url")})
     # Spisesteder og is
     food = []
     for p in places.values():
@@ -167,9 +209,9 @@ def build_day(D, d, places):
             continue
         sl = slots_on(p, d)
         if sl:
-            food.append({"name": p["name"], "hours": span(sl), "cat": p["cat"], "desc": p.get("desc", ""), "url": p.get("url")})
+            food.append({"name": p["name"], "hours": span(sl), "cat": p["cat"], "desc": L(p.get("desc", "")), "url": p.get("url")})
         elif not p.get("hours") and "seasons" not in p and p.get("label"):
-            food.append({"name": p["name"], "hours": "", "cat": p["cat"], "desc": p.get("label", ""), "url": p.get("url")})
+            food.append({"name": p["name"], "hours": "", "cat": p["cat"], "desc": L(p.get("label", "")), "url": p.get("url")})
     food.sort(key=lambda f: (f["cat"] != "mad", f["name"]))
     return {"iso": iso, "d": d, "klippen": klippen, "own": own, "items": items, "mus": mus, "swim": swim, "pool_closed": pool_closed, "pool_url": pool_url, "food": food}
 
@@ -190,19 +232,21 @@ KIND_LABEL = {"film": "Film", "svom": "Svømning", "kirke": "Kirke", "musik": "M
 BIRD = '<svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>'
 
 def icon(kind):
-    return f'<span class="ic ic-{kind}" title="{E(KIND_LABEL.get(kind, ""))}"><svg viewBox="0 0 24 24" aria-hidden="true">{ICON.get(kind, ICON["andet"])}</svg></span>'
+    return f'<span class="ic ic-{kind}" title="{E(L(KIND_LABEL.get(kind, "")))}"><svg viewBox="0 0 24 24" aria-hidden="true">{ICON.get(kind, ICON["andet"])}</svg></span>'
 
 def link(text, url):
     return f'<a href="{E(url)}" rel="noopener">{E(text)}</a>' if url else E(text)
 
 def render_day(x, i):
     d = x["d"]
-    rel = "I dag" if i == 0 else "I morgen" if i == 1 else WD[d.weekday()].capitalize()
+    wd_, wds_, mon_ = DAYNAMES[LANG]
+    rel = L("I dag") if i == 0 else L("I morgen") if i == 1 else wd_[d.weekday()].capitalize()
+    datetxt = f"{wd_[d.weekday()]}, {mon_[d.month - 1]} {d.day}" if LANG == "en" else f"{wd_[d.weekday()]}, {d.day}. {mon_[d.month - 1]}" if LANG == "de" else f"{wd_[d.weekday()]} {d.day}" + (". " if LANG == "da" else " ") + mon_[d.month - 1]
     h = [f'<section class="day" id="d-{x["iso"]}" data-date="{x["iso"]}">',
-         f'<header class="dayhead"><div class="leaf" aria-hidden="true"><span class="lw">{WD_SHORT[d.weekday()]}</span><span class="ln">{d.day}</span><span class="lm">{MON[d.month - 1][:3]}</span></div>'
-         f'<h2><span class="big" data-rel="{i}" data-wd="{WD[d.weekday()].capitalize()}">{E(rel)}</span><span class="date">{WD[d.weekday()]} {d.day}. {MON[d.month - 1]}</span></h2></header>']
+         f'<header class="dayhead"><div class="leaf" aria-hidden="true"><span class="lw">{wds_[d.weekday()]}</span><span class="ln">{d.day}</span><span class="lm">{mon_[d.month - 1][:3]}</span></div>'
+         f'<h2><span class="big" data-rel="{i}" data-wd="{wd_[d.weekday()].capitalize()}">{E(rel)}</span><span class="date">{E(datetxt)}</span></h2></header>']
     if x["klippen"] or x["own"]:
-        h.append(f'<div class="klippen"><p class="who">{BIRD}Hos Klippen</p><ul>')
+        h.append(f'<div class="klippen"><p class="who">{BIRD}{L("Hos Klippen")}</p><ul>')
         for e in x["own"]:
             h.append(f'<li class="own"><span class="t">{E(e["time"])}</span><span class="what"><b>{link(e["title"], e["url"])}</b>{("<span class=where>" + E(e["where"]) + "</span>") if e["where"] else ""}{("<small>" + E(e["text"]) + "</small>") if e["text"] else ""}</span></li>')
         for k in x["klippen"]:
@@ -215,18 +259,18 @@ def render_day(x, i):
             h.append(f'<li{end}>{icon(it["kind"] or "andet")}<span class="t">{E(it["time"])}</span><span class="what"><b>{link(it["title"], it["url"])}</b><span class="where">{E(it["where"])}</span></span></li>')
         h.append("</ol>")
     elif not (x["klippen"] or x["own"]):
-        h.append('<p class="quiet">Ingen arrangementer i kalenderen endnu.</p>')
+        h.append(f'<p class="quiet">{L("Ingen arrangementer i kalenderen endnu.")}</p>')
     tiles = []
     for m in x["mus"]:
         tiles.append(f'<a class="tile" href="{E(m["url"])}" rel="noopener"><span class="tn">{E(m["name"])}</span><span class="th">{E(m["hours"])}</span></a>')
     if x["swim"]:
-        tiles.append(f'<a class="tile sea" href="{E(x["pool_url"])}" rel="noopener"><span class="tn">Svømmehallen</span><span class="th">{E(x["swim"])}</span></a>')
+        tiles.append(f'<a class="tile sea" href="{E(x["pool_url"])}" rel="noopener"><span class="tn">{L("Svømmehallen")}</span><span class="th">{E(x["swim"])}</span></a>')
     elif x["pool_closed"]:
-        tiles.append(f'<a class="tile sea" href="{E(x["pool_url"])}" rel="noopener"><span class="tn">Svømmehallen</span><span class="th">Lukket</span></a>')
+        tiles.append(f'<a class="tile sea" href="{E(x["pool_url"])}" rel="noopener"><span class="tn">{L("Svømmehallen")}</span><span class="th">{L("Lukket")}</span></a>')
     if tiles:
-        h.append('<div class="opens"><p class="olabel">Åbent denne dag</p><div class="tiles">' + "".join(tiles) + "</div></div>")
+        h.append(f'<div class="opens"><p class="olabel">{L("Åbent denne dag")}</p><div class="tiles">' + "".join(tiles) + "</div></div>")
     if x["food"]:
-        h.append(f'<details class="food"><summary>{icon("mad")}<span>Spisesteder og is med åbent <b>{len(x["food"])}</b></span></summary><ul>')
+        h.append(f'<details class="food"><summary>{icon("mad")}<span>{L("Spisesteder og is med åbent")} <b>{len(x["food"])}</b></span></summary><ul>')
         for f in x["food"]:
             h.append(f'<li><span class="what"><b>{link(f["name"], f["url"])}</b><small>{E(f["desc"])}</small></span><span class="t">{E(f["hours"])}</span></li>')
         h.append("</ul></details>")
@@ -246,25 +290,81 @@ def jsonld(days):
                         **({"url": it["url"]} if it["url"] else {})})
     return json.dumps({"@context": "https://schema.org", "@graph": evs[:60]}, ensure_ascii=False)
 
+# skabelonens tekster: dansk → [en, de, sv]
+TPL = [
+    ('<html lang="da">', ['<html lang="en">', '<html lang="de">', '<html lang="sv">']),
+    ('Det sker i Gudhjem – i dag og de næste dage', ["What's on in Gudhjem – today and the next few days", "Was ist los in Gudhjem – heute und in den nächsten Tagen", "Det händer i Gudhjem – i dag och de närmaste dagarna"]),
+    ('Hvad sker der i Gudhjem i dag? Film i Scala, koncerter og gudstjenester, museer, svømmehal, børneaktiviteter og spisesteder med åbent – samlet og opdateret hver dag.',
+     ["What's on in Gudhjem today? Films at Scala, concerts and church services, museums, the swimming pool, activities for children and restaurants that are open – in one place, updated daily.",
+      "Was ist heute in Gudhjem los? Filme im Scala, Konzerte und Gottesdienste, Museen, Schwimmhalle, Kinderaktivitäten und geöffnete Restaurants – an einem Ort, täglich aktualisiert.",
+      "Vad händer i Gudhjem i dag? Film på Scala, konserter och gudstjänster, museer, simhall, barnaktiviteter och matställen som har öppet – samlat och uppdaterat varje dag."]),
+    ('Byens kalender: film, koncerter, museer, svømmehal og spisesteder – opdateret hver dag.',
+     ["The town calendar: films, concerts, museums, swimming pool and restaurants – updated daily.", "Der Kalender der Stadt: Filme, Konzerte, Museen, Schwimmhalle und Restaurants – täglich aktualisiert.", "Stadens kalender: film, konserter, museer, simhall och matställen – uppdaterad varje dag."]),
+    ('content="Det sker i Gudhjem"', ['content="What\'s on in Gudhjem"', 'content="Was ist los in Gudhjem"', 'content="Det händer i Gudhjem"']),
+    ('content="da_DK"', ['content="en_GB"', 'content="de_DE"', 'content="sv_SE"']),
+    ('</svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem', ['</svg>Made by <a href="{{BOOK}}">Klippen Hotel</a> in Gudhjem', '</svg>Von <a href="{{BOOK}}">Klippen Hotel</a> in Gudhjem', '</svg>Gjord av <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem']),
+    ('<h1>Det sker i Gudhjem</h1>', ["<h1>What's on in Gudhjem</h1>", "<h1>Was ist los in Gudhjem</h1>", "<h1>Det händer i Gudhjem</h1>"]),
+    ('Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.',
+     ["Films, concerts, church services, museums, the swimming pool and things for children – and where to eat. All in one place, updated every night.",
+      "Filme, Konzerte, Gottesdienste, Museen, Schwimmhalle und Kinderaktivitäten – und wo man essen kann. An einem Ort, jede Nacht aktualisiert.",
+      "Film, konserter, gudstjänster, museer, simhall och barnaktiviteter – och var du kan äta. Samlat på ett ställe och uppdaterat varje natt."]),
+    ('Tegning af Gudhjem set fra havet: Klippens hvide hotel på klipperne ved Grevens Dal med Gudhjem Mølle og kirken bagved, husene op ad bakken, Therns, Skt. Jørgens Gaard ved havnen, røgeriets gule skorstene og Christiansøbåden',
+     ["Drawing of Gudhjem seen from the sea: Klippen's white hotel on the cliffs at Grevens Dal with Gudhjem Mill and the church behind, the houses up the hill, Therns, Skt. Jørgens Gaard by the harbour, the smokehouse's yellow chimneys and the Christiansø ferry",
+      "Zeichnung von Gudhjem vom Meer aus: Klippens weißes Hotel auf den Klippen bei Grevens Dal mit der Mühle und der Kirche dahinter, die Häuser am Hang, Therns, Skt. Jørgens Gaard am Hafen, die gelben Schornsteine der Räucherei und die Christiansø-Fähre",
+      "Teckning av Gudhjem sett från havet: Klippens vita hotell på klipporna vid Grevens Dal med Gudhjems kvarn och kyrkan bakom, husen uppför backen, Therns, Skt. Jørgens Gaard vid hamnen, rökeriets gula skorstenar och Christiansøbåten"]),
+    ('aria-label="Vælg dag"', ['aria-label="Choose day"', 'aria-label="Tag wählen"', 'aria-label="Välj dag"']),
+    ('<h2>Bo midt i det hele</h2>', ['<h2>Stay right in the middle of it</h2>', '<h2>Mittendrin wohnen</h2>', '<h2>Bo mitt i allt</h2>']),
+    ('Klippen Hotel har tre små hoteller i Gudhjem: Grevens Dal på klipperne, Therns midt i byen og Skt. Jørgens Gaard ved havnen.',
+     ["Klippen Hotel has three small hotels in Gudhjem: Grevens Dal on the cliffs, Therns in the middle of town and Skt. Jørgens Gaard by the harbour.",
+      "Klippen Hotel hat drei kleine Hotels in Gudhjem: Grevens Dal auf den Klippen, Therns mitten in der Stadt und Skt. Jørgens Gaard am Hafen.",
+      "Klippen Hotel har tre små hotell i Gudhjem: Grevens Dal på klipporna, Therns mitt i stan och Skt. Jørgens Gaard vid hamnen."]),
+    ('Se værelser hos Klippen', ['See rooms at Klippen', 'Zimmer bei Klippen ansehen', 'Se rum hos Klippen']),
+    ('<h3>Har du et arrangement i Gudhjem?</h3>', ['<h3>Have an event in Gudhjem?</h3>', '<h3>Haben Sie eine Veranstaltung in Gudhjem?</h3>', '<h3>Har du ett evenemang i Gudhjem?</h3>']),
+    ('med dato, tid og sted, så kommer det med.', ['with the date, time and place, and we will add it.', 'mit Datum, Uhrzeit und Ort, dann nehmen wir es auf.', 'med datum, tid och plats, så kommer det med.']),
+    ('>Skriv til <a href="mailto', ['>Write to <a href="mailto', '>Schreiben Sie an <a href="mailto', '>Skriv till <a href="mailto']),
+    ('<p class="small">Opdateret {{UPDATED}}.</p>', ['<p class="small">Updated {{UPDATED}}.</p>', '<p class="small">Aktualisiert {{UPDATED}}.</p>', '<p class="small">Uppdaterad {{UPDATED}}.</p>']),
+]
+LANG_PATH = {"da": "", "en": "en/", "de": "de/", "sv": "sv/"}
+LANG_NAME = {"da": "DA", "en": "EN", "de": "DE", "sv": "SV"}
+BOOK_URL = {"da": "https://www.hotelklippen.com", "en": "https://www.hotelklippen.com/en", "de": "https://www.hotelklippen.com/de", "sv": "https://www.hotelklippen.com/sv"}
+
 def main():
+    global LANG, DTR
     D = load()
-    places = {p["id"]: p for p in D["places"]}
+    DTR = D.get("tr", {})
     now = datetime.datetime.now(TZ); today = now.date()
-    for pid, p in list(places.items()):
-        if p.get("cat") in ("mad", "is") and not p.get("ours") and not p.get("venue") and not open_within_week(p, today):
-            del places[pid]
-    days = [build_day(D, today + datetime.timedelta(days=i), places) for i in range(DAYS)]
-    nav = "".join(f'<a href="#d-{x["iso"]}" data-date="{x["iso"]}">{"I dag" if i == 0 else "I morgen" if i == 1 else WD_SHORT[x["d"].weekday()].capitalize() + " " + str(x["d"].day) + "."}</a>' for i, x in enumerate(days))
-    body = "\n".join(render_day(x, i) for i, x in enumerate(days))
-    tpl = (ROOT / "template.html").read_text(encoding="utf-8")
-    out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days))
-              .replace("{{UPDATED}}", f"{today.day}. {MON[today.month - 1]} {today.year}").replace("{{BOOK}}", BOOK))
+    tpl0 = (ROOT / "template.html").read_text(encoding="utf-8")
     site = ROOT / "site"; site.mkdir(exist_ok=True)
-    (site / "index.html").write_text(out, encoding="utf-8")
+    hreflang = "\n".join(f'<link rel="alternate" hreflang="{l}" href="https://detskerigudhjem.dk/{LANG_PATH[l]}">' for l in LANGS) + '\n<link rel="alternate" hreflang="x-default" href="https://detskerigudhjem.dk/">'
+    total = 0
+    for LANG in LANGS:
+        places = {p["id"]: p for p in D["places"]}
+        for pid, p in list(places.items()):
+            if p.get("cat") in ("mad", "is") and not p.get("ours") and not p.get("venue") and not open_within_week(p, today):
+                del places[pid]
+        days = [build_day(D, today + datetime.timedelta(days=i), places) for i in range(DAYS)]
+        wd_, wds_, mon_ = DAYNAMES[LANG]
+        nav = "".join(f'<a href="#d-{x["iso"]}" data-date="{x["iso"]}">{L("I dag") if i == 0 else L("I morgen") if i == 1 else wds_[x["d"].weekday()].capitalize() + " " + str(x["d"].day) + ("." if LANG in ("da", "de") else "")}</a>' for i, x in enumerate(days))
+        body = "\n".join(render_day(x, i) for i, x in enumerate(days))
+        tpl = tpl0
+        if LANG != "da":
+            for da, tr in TPL:
+                tpl = tpl.replace(da, tr[LANGS.index(LANG) - 1])
+        pre = "" if LANG == "da" else "../"
+        langs = "".join(f'<a href="{(pre + LANG_PATH[l]) or "./"}" hreflang="{l}" lang="{l}" aria-current="{str(l == LANG).lower()}">{LANG_NAME[l]}</a>' for l in LANGS)
+        upd = f"{mon_[today.month - 1]} {today.day}, {today.year}" if LANG == "en" else f"{today.day}. {mon_[today.month - 1]} {today.year}"
+        out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days))
+                  .replace("{{UPDATED}}", upd).replace("{{BOOK}}", BOOK_URL[LANG]).replace("{{PATH}}", LANG_PATH[LANG])
+                  .replace("{{HREFLANG}}", hreflang).replace("{{LANGS}}", langs).replace("{{TODAY}}", L("I dag")).replace("{{TOMORROW}}", L("I morgen")))
+        d = site / LANG_PATH[LANG]; d.mkdir(parents=True, exist_ok=True)
+        (d / "index.html").write_text(out, encoding="utf-8")
+        total += sum(len(x["items"]) for x in days)
+    LANG = "da"
     (site / "CNAME").write_text("detskerigudhjem.dk\n", encoding="utf-8")
     (site / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: https://detskerigudhjem.dk/sitemap.xml\n", encoding="utf-8")
-    (site / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://detskerigudhjem.dk/</loc><lastmod>{today.isoformat()}</lastmod><changefreq>daily</changefreq></url></urlset>\n', encoding="utf-8")
-    print("Bygget:", sum(len(x["items"]) for x in days), "punkter over", DAYS, "dage")
+    urls = "".join(f'<url><loc>https://detskerigudhjem.dk/{LANG_PATH[l]}</loc><lastmod>{today.isoformat()}</lastmod><changefreq>daily</changefreq></url>' for l in LANGS)
+    (site / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n', encoding="utf-8")
+    print("Bygget:", total, "punkter på", len(LANGS), "sprog")
 
 if __name__ == "__main__":
     main()
