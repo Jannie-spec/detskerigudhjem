@@ -24,6 +24,18 @@ o = ['<svg xmlns="http://www.w3.org/2000/svg" class="town v4" viewBox="0 0 1200 
      '<g stroke="#8a7b70" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"><path d="M820 262 l18 26 l-6 22"/><path d="M930 230 l-10 34 l16 36"/><path d="M1040 222 l12 40 l-8 40"/><path d="M1140 228 l-14 30 l10 44"/></g>',
      '</g>']
 
+# Gudhjem Mølle – hvid hollandsk mølle bagved, mellem Grevens Dal og kirken
+o.append('<g transform="translate(298 160) scale(.72)">'
+         '<path d="M-20 0 L-13 -66 L13 -66 L20 0Z" fill="#ffffff"/>'
+         '<rect x="-24" y="-30" width="48" height="4" fill="#5a5f5d"/>'
+         '<path d="M-15 -66 C-15 -84 15 -84 15 -66Z" fill="#4c5553"/>'
+         '<g transform="translate(0 -72) rotate(20)" fill="#f6f3ec" stroke="#6f7674" stroke-width="2">'
+         '<rect x="-3" y="-58" width="6" height="116" fill="#6f7674" stroke="none"/><rect x="-58" y="-3" width="116" height="6" fill="#6f7674" stroke="none"/>'
+         '<rect x="3" y="-56" width="12" height="44"/><rect x="-15" y="12" width="12" height="44"/><rect x="12" y="3" width="44" height="12"/><rect x="-56" y="-15" width="44" height="12"/></g>'
+         '<circle cx="0" cy="-72" r="4" fill="#4c5553"/>'
+         '<rect x="-5" y="-16" width="10" height="16" fill="#7a5c45"/><rect x="-4" y="-50" width="8" height="10" fill="#3f6670"/>'
+         '</g>')
+
 # Kirken – grå, bagved og til højre for Grevens Dal, højt på bakken
 o.append('<g transform="translate(346 108)"><rect x="0" y="30" width="70" height="38" fill="#bfc3bf"/><rect x="-14" y="2" width="26" height="66" fill="#bfc3bf"/>'
          '<path d="M-18 4 L-1 -22 L16 4Z" fill="#4c5553"/><path d="M-5 32 L35 10 L75 32Z" fill="#8f9592"/>'
