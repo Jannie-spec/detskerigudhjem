@@ -10,96 +10,164 @@
 <meta property="og:description" content="Byens kalender: film, koncerter, museer, svømmehal og spisesteder – opdateret hver dag.">
 <meta property="og:url" content="https://detskerigudhjem.dk/">
 <meta property="og:locale" content="da_DK">
-<meta name="theme-color" content="#eaf0ef">
+<meta name="theme-color" content="#e5e9e1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1140 520'%3E%3Cpolyline fill='none' stroke='%23b4533a' stroke-width='70' stroke-linejoin='round' points='500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;700&display=swap">
 <script type="application/ld+json">{{JSONLD}}</script>
 <style>
-/* Det sker i Gudhjem: havdis-baggrund, skifer-tekst, Østersø-blå links; Klippens egne ting i klippe-rød */
+/* Det sker i Gudhjem – i Klippens farver: salvie, koral og klippe-rød. Signatur: tegning af Gudhjem øverst og et kalenderblad for hver dag */
 :root{
-  --hav:#eaf0ef; --papir:#f7faf9; --ink:#1f2b2d; --muted:#56635f; --line:#cdd8d5;
-  --sea:#1f5f6b; --klippe:#b4533a; --sol:#e8b04b;
+  --bg:#f3f5f0; --surface:#fff; --sage:#e5e9e1; --mist:#c8d4d0; --moss:#6f806e; --sea:#c6d8d9; --deep:#3f6670;
+  --coral:#e37b5b; --brick:#b4533a; --ink:#302f2f; --muted:#5f625e; --line:#dde3d9; --sol:#f2c46b;
   --serif:"Young Serif", Georgia, serif; --sans:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 *{box-sizing:border-box}
-html{scroll-padding-top:64px}
-body{margin:0;background:var(--hav);color:var(--ink);font:400 17px/1.5 var(--sans)}
-a{color:var(--sea);text-underline-offset:3px;text-decoration-thickness:1px}
-a:hover{text-decoration-thickness:2px}
-:focus-visible{outline:2px solid var(--klippe);outline-offset:2px;border-radius:2px}
-.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 var(--sans)}
+a{color:var(--brick);text-underline-offset:3px;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--coral);outline-offset:2px;border-radius:4px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
 
-header.top{padding:40px 0 18px}
-header.top h1{font:400 clamp(2.3rem,8vw,3.6rem)/1.02 var(--serif);margin:0;letter-spacing:-.01em}
-header.top p{margin:12px 0 0;max-width:34em;color:var(--muted)}
-.by{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:.9rem;color:var(--muted)}
-.by a{color:var(--klippe);font-weight:500}
+/* forside: tegning af Gudhjem */
+.hero{background:var(--sage);position:relative;overflow:hidden}
+.hero .wrap{position:relative;z-index:1;padding-top:34px;padding-bottom:0}
+.hero h1{font:400 clamp(2.6rem,10vw,4.6rem)/.95 var(--serif);margin:0;letter-spacing:-.015em;max-width:8em}
+.hero p{margin:14px 0 0;max-width:30em;color:#4a4d49;font-size:1.02rem}
+.by{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:.92rem;color:var(--muted)}
+.by a{font-weight:700;text-decoration:none}
+.town{display:block;width:100%;height:clamp(170px,26vw,320px);margin-top:-8px}
+@media (min-width:760px){.town{margin-top:-60px}}
 
-nav.days{position:sticky;top:0;z-index:5;background:var(--hav);border-bottom:1px solid var(--line);margin:0 -16px;padding:10px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-nav.days::-webkit-scrollbar{display:none}
-nav.days a{flex:0 0 auto;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--papir);color:var(--ink);text-decoration:none;font-size:.92rem;font-weight:500}
-nav.days a.on{background:var(--ink);border-color:var(--ink);color:var(--papir)}
+nav.days{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.days .wrap{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-top:10px;padding-bottom:10px}
+nav.days .wrap::-webkit-scrollbar{display:none}
+nav.days a{flex:0 0 auto;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:.92rem;font-weight:500}
+nav.days a.on{background:var(--brick);border-color:var(--brick);color:#fff}
 
-.day{padding:30px 0 10px;border-bottom:1px solid var(--line)}
-.day h2{margin:0 0 16px;font-weight:400;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.day .big{font:400 clamp(2rem,7vw,2.8rem)/1 var(--serif)}
-.day .date{font-size:1rem;color:var(--muted)}
+/* en dag = et kalenderblad + indhold */
+main{padding:22px 0 10px;display:grid;gap:22px}
+.day{background:var(--surface);border-radius:22px;padding:22px 20px 18px;box-shadow:0 1px 0 var(--line)}
+.dayhead{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.leaf{flex:0 0 auto;width:64px;border-radius:12px;overflow:hidden;text-align:center;background:var(--bg);border:1px solid var(--line);display:grid}
+.leaf .lw{background:var(--coral);color:#fff;font-size:.78rem;font-weight:700;padding:3px 0;text-transform:capitalize}
+.leaf .ln{font:400 1.9rem/1.1 var(--serif);padding-top:4px}
+.leaf .lm{font-size:.78rem;color:var(--muted);padding-bottom:5px}
+.day h2{margin:0;display:grid;gap:2px;font-weight:400}
+.day .big{font:400 clamp(1.8rem,6vw,2.4rem)/1 var(--serif)}
+.day .date{font-size:.95rem;color:var(--muted)}
+.day:first-of-type .leaf .lw{background:var(--brick)}
 
-/* tidslinjen: klokkeslæt i venstre kolonne */
-.times,.klippen ul,.food ul{list-style:none;margin:0;padding:0}
-.times li,.klippen li,.food li{display:grid;grid-template-columns:6.6em 1fr;gap:4px 14px;padding:9px 0;border-top:1px solid var(--line)}
+/* Hos Klippen */
+.klippen{background:color-mix(in srgb,var(--coral) 12%,var(--surface));border-radius:16px;padding:14px 16px 6px;margin:0 0 16px}
+.klippen .who{margin:0 0 4px;display:flex;align-items:center;gap:8px;color:var(--brick);font-weight:700}
+.bird{width:34px;height:16px;fill:none;stroke:var(--brick);stroke-width:60;stroke-linejoin:round}
+.klippen ul,.times,.food ul{list-style:none;margin:0;padding:0}
+.klippen li{display:grid;grid-template-columns:6.4em 1fr;gap:2px 12px;padding:9px 0;border-top:1px solid color-mix(in srgb,var(--coral) 25%,transparent)}
+.klippen li:first-child{border-top:0}
+
+/* tidslinje med ikoner */
+.times li{display:grid;grid-template-columns:38px 5em 1fr;gap:2px 12px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
 .times li:first-child{border-top:0}
-.t{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);white-space:nowrap}
-.what b{font-weight:500}
-.what b a{color:var(--ink);text-decoration-color:var(--line)}
-.what b a:hover{color:var(--sea)}
-.where{color:var(--muted)}
-li.past{opacity:.45}
-li.now .t::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sol);margin-right:6px;vertical-align:1px}
+.t{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;padding-top:8px;font-size:.95rem}
+.klippen .t{padding-top:0}
+.what{display:grid;min-width:0}
+.times .what{padding-top:6px}
+.what b{font-weight:600;font-size:1.02rem;line-height:1.3}
+.what b a{color:var(--ink);text-decoration:none}
+.what b a:hover{color:var(--brick);text-decoration:underline}
+.where{color:var(--muted);font-size:.92rem}
+.what small{color:var(--muted)}
+.ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--sage);color:var(--moss)}
+.ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic-film{background:#ece6f0;color:#6d5a86}
+.ic-svom{background:var(--sea);color:var(--deep)}
+.ic-kirke{background:#efe9df;color:#8a6d45}
+.ic-musik{background:#f6e3da;color:var(--brick)}
+.ic-born{background:#fbe9c9;color:#a5701c}
+.ic-foredrag{background:#e4ebe9;color:var(--deep)}
+.ic-kunst{background:#f3dfe0;color:#9c4a55}
+.ic-mad{background:#f6e3da;color:var(--brick)}
+li.past{opacity:.4}
+li.now .t{color:var(--brick)}
+li.now .t::after{content:"nu";display:inline-block;margin-left:6px;font-size:.7rem;background:var(--sol);color:var(--ink);border-radius:999px;padding:1px 7px;vertical-align:2px}
 
-.klippen{border-left:3px solid var(--klippe);padding:2px 0 2px 14px;margin:0 0 18px}
-.klippen .who{margin:0 0 4px;display:flex;align-items:center;gap:8px;color:var(--klippe);font-weight:700;font-size:.95rem}
-.bird{width:30px;height:14px;fill:none;stroke:var(--klippe);stroke-width:60;stroke-linejoin:round}
-.klippen li{border-top:1px solid color-mix(in srgb,var(--klippe) 18%,transparent)}
-.klippen li:first-of-type{border-top:0}
-.klippen li.own .t{color:var(--klippe)}
+/* åbent denne dag */
+.opens{margin-top:14px}
+.olabel{margin:0 0 8px;font-size:.88rem;color:var(--muted);font-weight:500}
+.tiles{display:flex;flex-wrap:wrap;gap:8px}
+.tile{display:grid;padding:8px 12px;border-radius:12px;background:var(--sage);text-decoration:none;color:var(--ink);min-width:7.5em}
+.tile.sea{background:var(--sea)}
+.tile .tn{font-weight:600;font-size:.92rem}
+.tile .th{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.tile:hover{outline:2px solid var(--mist)}
 
-.open{margin:14px 0 4px;padding:12px 14px;background:var(--papir);border-radius:10px;display:grid;gap:6px;font-size:.95rem}
-.open p{margin:0}
-.open b{font-weight:700;margin-right:4px}
-.quiet{color:var(--muted)}
+.food{margin-top:14px;border-top:1px dashed var(--line);padding-top:8px}
+.food summary{cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:600;list-style:none}
+.food summary::-webkit-details-marker{display:none}
+.food summary b{background:var(--brick);color:#fff;border-radius:999px;padding:0 8px;font-size:.8rem;margin-left:4px}
+.food li{display:flex;justify-content:space-between;gap:12px;padding:8px 0 8px 50px;border-top:1px solid var(--line)}
+.food li .t{padding-top:0;font-weight:500;color:var(--muted)}
 
-.food{margin:12px 0 6px}
-.food summary{cursor:pointer;color:var(--sea);font-weight:500;padding:6px 0}
-.food li{grid-template-columns:1fr auto}
-.food small{display:block;color:var(--muted)}
+.quiet{color:var(--muted);margin:0}
 
-footer{padding:34px 0 60px;display:grid;gap:22px;color:var(--muted);font-size:.95rem}
-.stay{background:var(--ink);color:var(--papir);border-radius:14px;padding:22px}
-.stay h2{font:400 1.6rem/1.15 var(--serif);margin:0 0 8px;color:var(--papir)}
-.stay p{margin:0 0 14px;color:#d6e0de}
-.stay a.btn{display:inline-block;background:var(--klippe);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+footer{padding:26px 0 60px;display:grid;gap:22px;color:var(--muted);font-size:.95rem}
+.stay{background:var(--brick);color:#fff;border-radius:22px;padding:24px;position:relative;overflow:hidden}
+.stay h2{font:400 1.8rem/1.1 var(--serif);margin:0 0 8px}
+.stay p{margin:0 0 16px;max-width:30em;color:#fbe7df}
+.stay a.btn{display:inline-block;background:#fff;color:var(--brick);text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+.stay .bird{position:absolute;right:-20px;bottom:-14px;width:180px;height:82px;stroke:#ffffff;opacity:.25;stroke-width:28}
 footer h3{font:700 1rem var(--sans);color:var(--ink);margin:0 0 4px}
 footer p{margin:0}
+.small{font-size:.85rem}
 
 @media (max-width:520px){
   body{font-size:16px}
-  .times li,.klippen li{grid-template-columns:6.4em 1fr;gap:2px 10px}
-  .t{font-size:.9rem}
+  .day{padding:18px 14px 14px;border-radius:18px}
+  .times li{grid-template-columns:34px 4.6em 1fr;gap:2px 10px}
+  .ic{width:34px;height:34px}
+  .klippen li{grid-template-columns:5.6em 1fr}
+  .t{font-size:.88rem}
+  .food li{padding-left:0}
 }
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="top">
-  <h1>Det sker i Gudhjem</h1>
-  <p>Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.</p>
-  <p class="by"><svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem</p>
+<header class="hero">
+  <div class="wrap">
+    <h1>Det sker i Gudhjem</h1>
+    <p>Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.</p>
+    <p class="by"><svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem</p>
+  </div>
+  <svg class="town" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Tegning af Gudhjem: huse med røde tage ned ad klippen, kirken, røgeriets skorstene og havnen">
+    <circle cx="1010" cy="70" r="46" fill="#f2c46b" opacity=".75"/>
+    <!-- klippe og bakke -->
+    <path d="M0 150 C120 120 210 96 330 104 C430 110 500 70 600 82 C700 94 760 140 860 150 C960 160 1080 150 1200 170 L1200 300 L0 300Z" fill="#b7c4b4"/>
+    <path d="M0 196 C140 170 260 160 380 172 C520 186 600 150 740 168 C860 184 980 196 1200 204 L1200 300 L0 300Z" fill="#8e9f8b"/>
+    <!-- kirken -->
+    <g transform="translate(520 50)"><rect x="0" y="40" width="70" height="40" fill="#f6f3ec"/><rect x="58" y="10" width="26" height="70" fill="#f6f3ec"/><path d="M54 12 L71 -14 L88 12Z" fill="#3e4a47"/><path d="M-4 42 L35 20 L74 42Z" fill="#b4533a"/><rect x="66" y="30" width="10" height="14" rx="5" fill="#8e9f8b"/></g>
+    <!-- huse -->
+    <g>
+      <g transform="translate(210 110)"><rect width="64" height="44" fill="#f6f3ec"/><path d="M-6 2 L32 -24 L70 2Z" fill="#e37b5b"/><rect x="12" y="16" width="10" height="12" fill="#3f6670"/><rect x="40" y="16" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(300 128)"><rect width="78" height="40" fill="#f2dfa8"/><path d="M-6 2 L39 -22 L84 2Z" fill="#b4533a"/><rect x="14" y="14" width="10" height="12" fill="#3f6670"/><rect x="50" y="14" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(400 112)"><rect width="56" height="46" fill="#f6f3ec"/><path d="M-6 2 L28 -22 L62 2Z" fill="#e37b5b"/><rect x="22" y="18" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(640 120)"><rect width="70" height="44" fill="#f6f3ec"/><path d="M-6 2 L35 -24 L76 2Z" fill="#b4533a"/><rect x="12" y="16" width="10" height="12" fill="#3f6670"/><rect x="46" y="16" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(730 140)"><rect width="60" height="38" fill="#f2dfa8"/><path d="M-6 2 L30 -20 L66 2Z" fill="#e37b5b"/><rect x="24" y="14" width="10" height="12" fill="#3f6670"/></g>
+      <g transform="translate(120 140)"><rect width="56" height="38" fill="#f6f3ec"/><path d="M-6 2 L28 -20 L62 2Z" fill="#b4533a"/><rect x="22" y="14" width="10" height="12" fill="#3f6670"/></g>
+    </g>
+    <!-- røgeriets skorstene -->
+    <g transform="translate(860 96)" fill="#f6f3ec"><path d="M0 70 L8 0 L22 0 L30 70Z"/><path d="M36 70 L44 6 L58 6 L66 70Z"/><path d="M72 70 L80 12 L94 12 L102 70Z"/><rect x="-10" y="66" width="122" height="34"/><path d="M8 0 C2 -18 26 -24 18 -40" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".8"/></g>
+    <!-- hav og havn -->
+    <path d="M0 236 C200 226 400 240 600 232 C800 224 1000 238 1200 230 L1200 300 L0 300Z" fill="#c6d8d9"/>
+    <path d="M560 238 L760 238 L760 248 L560 248Z" fill="#8e9f8b"/>
+    <g fill="none" stroke="#3f6670" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M80 262 q14 -8 28 0 t28 0"/><path d="M330 276 q14 -8 28 0 t28 0"/><path d="M880 268 q14 -8 28 0 t28 0"/><path d="M1080 284 q14 -8 28 0 t28 0"/></g>
+    <g transform="translate(640 250)"><path d="M0 10 L60 10 L50 22 L8 22Z" fill="#b4533a"/><rect x="26" y="-14" width="4" height="24" fill="#302f2f"/><path d="M30 -12 L48 6 L30 6Z" fill="#f6f3ec"/></g>
+  </svg>
 </header>
-<nav class="days" aria-label="Vælg dag">{{NAV}}</nav>
+<nav class="days" aria-label="Vælg dag"><div class="wrap">{{NAV}}</div></nav>
+<div class="wrap">
 <main>
 {{DAYS}}
 </main>
@@ -108,6 +176,7 @@ footer p{margin:0}
     <h2>Bo midt i det hele</h2>
     <p>Klippen Hotel har tre små hoteller i Gudhjem: Grevens Dal på klipperne, Therns midt i byen og Skt. Jørgens Gaard ved havnen.</p>
     <a class="btn" href="{{BOOK}}">Se værelser hos Klippen</a>
+    <svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>
   </div>
   <div>
     <h3>Har du et arrangement i Gudhjem?</h3>
