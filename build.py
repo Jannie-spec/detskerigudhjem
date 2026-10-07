@@ -172,9 +172,10 @@ def build_day(D, d, places):
             continue
         if e.get("t"):
             tt = hm(e["t"]) + (("–" + hm(e["t2"])) if e.get("t2") else "")
-            items.append(item(tmin(e["t"]), tt, L(e["title"]), e.get("where", ""), e.get("url"), tmin(e.get("t2") or e["t"]) + (0 if e.get("t2") else 90), kind_of(e)))
+            items.append(item(tmin(e["t"]), tt, L(e["title"]), e.get("where", ""), e.get("rurl") or e.get("url"), tmin(e.get("t2") or e["t"]) + (0 if e.get("t2") else 90), kind_of(e)))
         else:
-            items.append(item(-1, L("Hele dagen"), L(e["title"]), e.get("where", ""), e.get("url"), None, kind_of(e)))
+            items.append(item(-1, L("Hele dagen"), L(e["title"]), e.get("where", ""), e.get("rurl") or e.get("url"), None, kind_of(e)))
+        items[-1]["reg"] = {1: L("Kræver tilmelding"), 2: L("Tilmelding til nogle aktiviteter")}.get(e.get("reg"), "")
     for f in D.get("films", []):
         if f["d"] == iso:
             items.append(item(tmin(f["t"]), hm(f["t"]), f["title"], "Scala Gudhjem, " + L("Biograf").lower(), "http://www.scalagudhjem.dk/", tmin(f["t"]) + 30, "film"))
@@ -260,7 +261,7 @@ def render_day(x, i):
         h.append('<ol class="times">')
         for it in x["items"]:
             end = f' data-end="{it["end"]}"' if it["end"] else ""
-            h.append(f'<li{end}>{icon(it["kind"] or "andet")}<span class="t">{E(it["time"])}</span><span class="what"><b>{link(it["title"], it["url"])}</b><span class="where">{E(it["where"])}</span></span></li>')
+            h.append(f'<li{end}>{icon(it["kind"] or "andet")}<span class="t">{E(it["time"])}</span><span class="what"><b>{link(it["title"], it["url"])}</b><span class="where">{E(it["where"])}</span>{('<a class="reg" href="' + E(it["url"]) + '" rel="noopener">' + E(it["reg"]) + ' ↗</a>') if it.get("reg") else ""}</span></li>')
         h.append("</ol>")
     elif not (x["klippen"] or x["own"]):
         h.append(f'<p class="quiet">{L("Ingen arrangementer i kalenderen endnu.")}</p>')
