@@ -34,7 +34,7 @@ U = {
     "Svømmehallen": ["Swimming pool", "Schwimmhalle", "Simhallen"],
     "Lukket": ["Closed", "Geschlossen", "Stängt"],
     "Åbent denne dag": ["Open this day", "An diesem Tag geöffnet", "Öppet denna dag"],
-    "Spisesteder og is med åbent": ["Restaurants and ice cream open", "Geöffnete Restaurants und Eis", "Matställen och glass som har öppet"],
+    "Spisesteder, barer og is, der har åbent": ["Restaurants, bars and ice cream – open", "Geöffnete Restaurants, Bars und Eisdielen", "Matställen, barer och glass som har öppet"],
     "Ingen arrangementer i kalenderen endnu.": ["Nothing in the calendar yet.", "Noch nichts im Kalender.", "Inget i kalendern ännu."],
     "Hos Klippen": ["At Klippen", "Bei Klippen", "Hos Klippen"],
     "I dag": ["Today", "Heute", "I dag"], "I morgen": ["Tomorrow", "Morgen", "I morgon"],
@@ -157,7 +157,8 @@ def build_day(D, d, places):
     for key, pid in (("plateau", "plat"), ("jylkat", "jyl")):
         v = V[key]; sl = slots_on(v, d)
         if sl:
-            klippen.append({"name": L(v["name"]), "where": L(v["where"]), "hours": span(sl), "url": v.get("url"), "end": max(tmin(b) for _, b in sl)})
+            klippen.append({"name": L(v["name"]), "where": L(v["where"]), "hours": span(sl), "url": v.get("url"), "end": max(tmin(b) for _, b in sl),
+                            "desc": L((next((q for q in D["places"] if q["id"] == pid), {}) or {}).get("desc") or v["where"])})
     own = []
     for e in sorted(D.get("events", []), key=lambda e: e.get("time") or ""):
         if e["date"] <= iso <= (e.get("to") or e["date"]):
@@ -214,6 +215,8 @@ def build_day(D, d, places):
         elif not p.get("hours") and "seasons" not in p and p.get("label"):
             food.append({"name": p["name"], "hours": "", "cat": p["cat"], "desc": L(p.get("label", "")), "url": p.get("url")})
     food.sort(key=lambda f: (f["cat"] != "mad", f["name"]))
+    # Klippens egne spisesteder/barer står også øverst i listen
+    food = [{"name": k["name"], "hours": k["hours"], "cat": "mad", "desc": k["desc"], "url": k["url"], "ours": True} for k in klippen] + food
     return {"iso": iso, "d": d, "klippen": klippen, "own": own, "items": items, "mus": mus, "swim": swim, "pool_closed": pool_closed, "pool_url": pool_url, "food": food}
 
 
@@ -271,9 +274,10 @@ def render_day(x, i):
     if tiles:
         h.append(f'<div class="opens"><p class="olabel">{L("Åbent denne dag")}</p><div class="tiles">' + "".join(tiles) + "</div></div>")
     if x["food"]:
-        h.append(f'<details class="food"><summary>{icon("mad")}<span>{L("Spisesteder og is med åbent")} <b>{len(x["food"])}</b></span></summary><ul>')
+        h.append(f'<details class="food"><summary>{icon("mad")}<span>{L("Spisesteder, barer og is, der har åbent")} <b>{len(x["food"])}</b></span></summary><ul>')
         for f in x["food"]:
-            h.append(f'<li><span class="what"><b>{link(f["name"], f["url"])}</b><small>{E(f["desc"])}</small></span><span class="t">{E(f["hours"])}</span></li>')
+            tag = f'<span class="tag">Klippen</span>' if f.get("ours") else ""
+            h.append(f'<li{" class=ours" if f.get("ours") else ""}><span class="what"><b>{tag}{link(f["name"], f["url"])}</b><small>{E(f["desc"])}</small></span><span class="t">{E(f["hours"])}</span></li>')
         h.append("</ul></details>")
     h.append("</section>")
     return "\n".join(h)

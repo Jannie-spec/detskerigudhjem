@@ -83,11 +83,11 @@ main{padding:22px 0 10px;display:grid;gap:22px}
 .klippen .who{margin:0 0 4px;display:flex;align-items:center;gap:8px;color:var(--brick);font-weight:700}
 .bird{width:34px;height:16px;fill:none;stroke:var(--brick);stroke-width:60;stroke-linejoin:round}
 .klippen ul,.times,.food ul{list-style:none;margin:0;padding:0}
-.klippen li{display:grid;grid-template-columns:6.4em 1fr;gap:2px 12px;padding:9px 0;border-top:1px solid color-mix(in srgb,var(--coral) 25%,transparent)}
+.klippen li{display:grid;grid-template-columns:7em 1fr;gap:2px 12px;padding:9px 0;border-top:1px solid color-mix(in srgb,var(--coral) 25%,transparent)}
 .klippen li:first-child{border-top:0}
 
 /* tidslinje med ikoner */
-.times li{display:grid;grid-template-columns:38px 5em 1fr;gap:2px 12px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.times li{display:grid;grid-template-columns:38px 7em 1fr;gap:2px 12px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
 .times li:first-child{border-top:0}
 .t{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;padding-top:8px;font-size:.95rem}
 .klippen .t{padding-top:0}
@@ -131,6 +131,7 @@ li.now .t::after{content:"nu";display:inline-block;margin-left:6px;font-size:.7r
 .food summary b{background:var(--brick);color:#fff;border-radius:999px;padding:0 8px;font-size:.8rem;margin-left:4px}
 .food li{display:flex;justify-content:space-between;gap:12px;padding:8px 0 8px 50px;border-top:1px solid var(--line)}
 .food li .t{padding-top:0;font-weight:500;color:var(--muted)}
+.food .tag{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--brick);border-radius:4px;padding:2px 5px;margin-right:6px;vertical-align:2px}
 
 .quiet{color:var(--muted);margin:0}
 
@@ -147,9 +148,9 @@ footer p{margin:0}
 @media (max-width:520px){
   body{font-size:16px}
   .day{padding:18px 14px 14px;border-radius:18px}
-  .times li{grid-template-columns:34px 4.6em 1fr;gap:2px 10px}
+  .times li{grid-template-columns:34px 6.4em 1fr;gap:2px 10px}
   .ic{width:34px;height:34px}
-  .klippen li{grid-template-columns:5.6em 1fr}
+  .klippen li{grid-template-columns:6.4em 1fr}
   .t{font-size:.88rem}
   .food li{padding-left:0}
 }
