@@ -199,6 +199,11 @@ def build_day(D, d, places):
         swim = span(sl) if sl else None
     items.sort(key=lambda x: (x["s"], x["title"]))
     # Åbent: museer + svømmehal
+    # Førder: butik og reception
+    rv = V.get("reception"); sl = slots_on(rv, d) if rv else []
+    if sl:
+        klippen.append({"name": "Førder", "where": L("Butik med bornholmske varer, tøj og gaver · reception for Klippen Hotel") + " · Brøddegade 28",
+                        "hours": span(sl), "url": "https://foerder.dk/", "end": max(tmin(b) for _, b in sl), "desc": "", "shop": True})
     mus = []
     for mid in MUSEUMS:
         p = places.get(mid)
@@ -217,7 +222,7 @@ def build_day(D, d, places):
             food.append({"name": p["name"], "hours": "", "cat": p["cat"], "desc": L(p.get("label", "")), "url": p.get("url")})
     food.sort(key=lambda f: (f["cat"] != "mad", f["name"]))
     # Klippens egne spisesteder/barer står også øverst i listen
-    food = [{"name": k["name"], "hours": k["hours"], "cat": "mad", "desc": k["desc"], "url": k["url"], "ours": True} for k in klippen] + food
+    food = [{"name": k["name"], "hours": k["hours"], "cat": "mad", "desc": k["desc"], "url": k["url"], "ours": True} for k in klippen if not k.get("shop")] + food
     return {"iso": iso, "d": d, "klippen": klippen, "own": own, "items": items, "mus": mus, "swim": swim, "pool_closed": pool_closed, "pool_url": pool_url, "food": food}
 
 
