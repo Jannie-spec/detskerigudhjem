@@ -175,7 +175,7 @@ def build_day(D, d, places):
             items.append(item(tmin(e["t"]), tt, L(e["title"]), e.get("where", ""), e.get("rurl") or e.get("url"), tmin(e.get("t2") or e["t"]) + (0 if e.get("t2") else 90), kind_of(e)))
         else:
             items.append(item(-1, L("Hele dagen"), L(e["title"]), e.get("where", ""), e.get("rurl") or e.get("url"), None, kind_of(e)))
-        items[-1]["reg"] = {1: L("Kræver tilmelding"), 2: L("Tilmelding til nogle aktiviteter")}.get(e.get("reg"), "")
+        items[-1]["reg"] = {1: L("Kræver tilmelding"), 2: L("Tilmelding til nogle aktiviteter"), 3: L("Billet på forhånd")}.get(e.get("reg"), "")
     for f in D.get("films", []):
         if f["d"] == iso:
             items.append(item(tmin(f["t"]), hm(f["t"]), f["title"], "Scala Gudhjem, " + L("Biograf").lower(), "http://www.scalagudhjem.dk/", tmin(f["t"]) + 30, "film"))
