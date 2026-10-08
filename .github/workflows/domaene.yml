@@ -1,0 +1,24 @@
+name: Sæt domæne på GitHub Pages
+on:
+  workflow_dispatch:
+    inputs:
+      https:
+        description: "Slå HTTPS-tvang til (true/false)"
+        default: "false"
+permissions:
+  pages: write
+  contents: read
+jobs:
+  domaene:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sæt custom domain
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X PUT repos/${{ github.repository }}/pages -f cname=detskerigudhjem.dk -F https_enforced=${{ inputs.https }} || \
+          gh api -X PUT repos/${{ github.repository }}/pages -f cname=detskerigudhjem.dk
+          gh api repos/${{ github.repository }}/pages
+          dig +short detskerigudhjem.dk A || true
+          dig +short www.detskerigudhjem.dk || true
+          curl -sI http://detskerigudhjem.dk | head -5 || true
