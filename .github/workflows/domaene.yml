@@ -16,9 +16,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api -X PUT repos/${{ github.repository }}/pages -f cname=detskerigudhjem.dk -F https_enforced=${{ inputs.https }} || \
-          gh api -X PUT repos/${{ github.repository }}/pages -f cname=detskerigudhjem.dk
-          gh api repos/${{ github.repository }}/pages
-          dig +short detskerigudhjem.dk A || true
-          dig +short www.detskerigudhjem.dk || true
-          curl -sI http://detskerigudhjem.dk | head -5 || true
+          out=$(gh api -X PUT repos/${{ github.repository }}/pages -f cname=detskerigudhjem.dk -F https_enforced=${{ inputs.https }} 2>&1) || true
+          echo "::warning::PUT: $(echo $out | tr '\n' ' ' | cut -c1-600)"
+          info=$(gh api repos/${{ github.repository }}/pages 2>&1) || true
+          echo "::warning::PAGES: $(echo $info | tr '\n' ' ' | cut -c1-900)"
+          echo "::warning::DNS: $(dig +short detskerigudhjem.dk A | tr '\n' ' ') / www: $(dig +short www.detskerigudhjem.dk | tr '\n' ' ')"
