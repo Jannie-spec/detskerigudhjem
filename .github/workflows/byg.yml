@@ -1,11 +1,11 @@
 # Bygger detskerigudhjem.dk og lægger den på GitHub Pages.
-# Kører hver nat efter Klippen-appens nattetjek, midt på dagen, og når siden rettes.
+# Kører om morgenen efter Klippen-appens tjek kl. 8 (hver halve time, så den fanger appens opdatering, også hvis den kommer sent), midt på dagen, og når siden rettes.
 name: Byg og udgiv
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "45 1 * * *"   # ca. 03.45 dansk sommertid
+    - cron: "15,45 6-9 * * *"   # UTC: ca. 08.15–11.45 sommertid / 07.15–10.45 vintertid
     - cron: "5 10 * * *"   # ca. 12.05 – fanger rettelser i løbet af dagen
   workflow_dispatch: {}
 permissions:
