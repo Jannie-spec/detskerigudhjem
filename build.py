@@ -416,7 +416,7 @@ TPL = [
     ('<h3>Har du et arrangement i Gudhjem?</h3>', ['<h3>Have an event in Gudhjem?</h3>', '<h3>Haben Sie eine Veranstaltung in Gudhjem?</h3>', '<h3>Har du ett evenemang i Gudhjem?</h3>']),
     ('med dato, tid og sted, så kommer det med.', ['with the date, time and place, and we will add it.', 'mit Datum, Uhrzeit und Ort, dann nehmen wir es auf.', 'med datum, tid och plats, så kommer det med.']),
     ('>Skriv til <a href="mailto', ['>Write to <a href="mailto', '>Schreiben Sie an <a href="mailto', '>Skriv till <a href="mailto']),
-    ('<p class="small">Opdateret {{UPDATED}}.</p>', ['<p class="small">Updated {{UPDATED}}.</p>', '<p class="small">Aktualisiert {{UPDATED}}.</p>', '<p class="small">Uppdaterad {{UPDATED}}.</p>']),
+    ('<p class="small">Opdateret {{UPDATED}}. · <a href="#" class="cookie-valg">Cookie-valg</a></p>', ['<p class="small">Updated {{UPDATED}}. · <a href="#" class="cookie-valg">Cookie settings</a></p>', '<p class="small">Aktualisiert {{UPDATED}}. · <a href="#" class="cookie-valg">Cookie-Einstellungen</a></p>', '<p class="small">Uppdaterad {{UPDATED}}. · <a href="#" class="cookie-valg">Cookieval</a></p>']),
 ]
 LANG_PATH = {"da": "", "en": "en/", "de": "de/", "sv": "sv/"}
 LANG_NAME = {"da": "DA", "en": "EN", "de": "DE", "sv": "SV"}
@@ -452,7 +452,7 @@ def main():
         out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days, later))
                   .replace("{{UPDATED}}", upd).replace("{{BOOK}}", BOOK_URL[LANG]).replace("{{PATH}}", LANG_PATH[LANG])
                   .replace("{{HREFLANG}}", hreflang).replace("{{LANGS}}", langs).replace("{{TODAY}}", L("I dag")).replace("{{TOMORROW}}", L("I morgen"))
-                  .replace("{{SITENAME}}", SITENAME[LANG].replace('"', "&quot;")).replace("{{LANGCODE}}", LANG))
+                  .replace("{{SITENAME}}", SITENAME[LANG].replace('"', "&quot;")).replace("{{LANGCODE}}", LANG).replace("{{UP}}", pre))
         d = site / LANG_PATH[LANG]; d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(out, encoding="utf-8")
         total += sum(len(x["items"]) for x in days)
