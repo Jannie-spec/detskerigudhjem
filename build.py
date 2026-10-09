@@ -50,6 +50,7 @@ U = {
         "What is already in the calendar for the coming year. More events are added all the time.",
         "Was für das kommende Jahr schon im Kalender steht. Laufend kommen weitere Veranstaltungen dazu.",
         "Det som redan står i kalendern det kommande året. Fler evenemang tillkommer löpande."],
+    "til": ["until", "bis", "till"],
     "Intet i kalenderen længere frem endnu.": ["Nothing further ahead in the calendar yet.", "Noch nichts Weiteres im Kalender.", "Inget längre fram i kalendern ännu."],
 }
 
@@ -173,7 +174,7 @@ def build_day(D, d, places):
     # I byen: events, film, svømmehal-events
     items = []
     for e in D.get("town", []):
-        if not (e["d"] <= iso <= (e.get("to") or e["d"])):
+        if e.get("long") or not (e["d"] <= iso <= (e.get("to") or e["d"])):
             continue
         if e.get("wd") and ((d.weekday() + 1) % 7) not in e["wd"]:
             continue
@@ -301,21 +302,25 @@ def build_later(D, today):
     rows = []
     for e in D.get("town", []):
         d1 = datetime.date.fromisoformat(e["d"]); d2 = datetime.date.fromisoformat(e.get("to") or e["d"])
-        if d1 < start or d1 > end:
+        if e.get("long"):   # udstillinger o.l.: vises i den måned, de åbner – eller i første måned, hvis de allerede er i gang
+            if d2 < start or d1 > end:
+                continue
+        elif d1 < start or d1 > end:
             continue
         tt = (hm(e["t"]) + (("–" + hm(e["t2"])) if e.get("t2") else "")) if e.get("t") else ""
         rows.append({"d": d1, "to": d2, "time": tt, "title": L(e["title"]), "where": e.get("where", ""), "url": e.get("rurl") or e.get("url"),
-                     "kind": kind_of(e), "reg": {1: L("Kræver tilmelding"), 2: L("Tilmelding til nogle aktiviteter"), 3: L("Billet på forhånd")}.get(e.get("reg"), ""), "own": False})
+                     "kind": kind_of(e), "reg": {1: L("Kræver tilmelding"), 2: L("Tilmelding til nogle aktiviteter"), 3: L("Billet på forhånd")}.get(e.get("reg"), ""), "own": False,
+                     "long": bool(e.get("long")), "k": max(d1, start)})
     for e in D.get("events", []):
         d1 = datetime.date.fromisoformat(e["date"]); d2 = datetime.date.fromisoformat(e.get("to") or e["date"])
         if d1 < start or d1 > end:
             continue
         rows.append({"d": d1, "to": d2, "time": kl(e["time"]) if e.get("time") else "", "title": L(e["title"]), "where": L(e.get("where", "")),
-                     "url": e.get("url"), "kind": "andet", "reg": "", "own": True})
-    rows.sort(key=lambda r: (r["d"], r["time"], r["title"]))
+                     "url": e.get("url"), "kind": "andet", "reg": "", "own": True, "long": False, "k": d1})
+    rows.sort(key=lambda r: (r["k"], not r["long"], r["time"], r["title"]))
     months = []
     for r in rows:
-        k = (r["d"].year, r["d"].month)
+        k = (r["k"].year, r["k"].month)
         if not months or months[-1]["k"] != k:
             months.append({"k": k, "rows": []})
         months[-1]["rows"].append(r)
@@ -333,14 +338,21 @@ def render_later(months, today):
                  f'{("<span class=my>" + str(y) + "</span>") if y != today.year else ""}<b>{len(m["rows"])}</b></summary><ol class="lrows">')
         for r in m["rows"]:
             d, t = r["d"], r["to"]
-            if t != d:
+            if r["long"]:
+                dd = f"{t.day}/{t.month}"
+                wtxt = L("til")
+            elif t != d:
                 dd = (f"{d.day}.–{t.day}." if t.month == d.month else f"{d.day}/{d.month}–{t.day}/{t.month}") if LANG != "en" else (f"{d.day}–{t.day}" if t.month == d.month else f"{d.day}/{d.month}–{t.day}/{t.month}")
                 wtxt = f"{wds_[d.weekday()]}–{wds_[t.weekday()]}"
             else:
                 dd = f"{d.day}." if LANG in ("da", "de") else str(d.day)
                 wtxt = wds_[d.weekday()]
             reg = ('<a class="reg" href="' + E(r["url"]) + '" rel="noopener">' + E(r["reg"]) + ' ↗</a>') if r["reg"] else ""
-            where = " · ".join(x for x in (r["where"], r["time"]) if x)
+            per = ""
+            if r["long"]:
+                f = lambda x: (f"{x.day}. {mon_[x.month - 1][:3]}" if LANG != "en" else f"{mon_[x.month - 1][:3]} {x.day}")
+                per = f"{f(d)} – {f(t)}" + (f" {t.year}" if t.year != d.year else "")
+            where = " · ".join(x for x in (r["where"], per, r["time"]) if x)
             h.append(f'<li{" class=own" if r["own"] else ""}><span class="ld"><span class="lwd">{E(wtxt)}</span><span class="ldn">{E(dd)}</span></span>'
                      f'<span class="what"><b>{BIRD if r["own"] else ""}{link(r["title"], r["url"])}</b><span class="where">{E(where)}</span>{reg}</span></li>')
         h.append('</ol></details>')
