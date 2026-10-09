@@ -413,6 +413,8 @@ TPL = [
       "Klippen Hotel hat drei kleine Hotels in Gudhjem: Grevens Dal auf den Klippen, Therns mitten in der Stadt und Skt. Jørgens Gaard am Hafen.",
       "Klippen Hotel har tre små hotell i Gudhjem: Grevens Dal på klipporna, Therns mitt i stan och Skt. Jørgens Gaard vid hamnen."]),
     ('Se værelser hos Klippen', ['See rooms at Klippen', 'Zimmer bei Klippen ansehen', 'Se rum hos Klippen']),
+    ('<h3>Resten af Bornholm</h3>', ['<h3>The rest of Bornholm</h3>', '<h3>Der Rest von Bornholm</h3>', '<h3>Resten av Bornholm</h3>']),
+    ('<p>Se hvad der sker i Rønne, Svaneke, Allinge, Nexø og Hasle på', ['<p>See what\'s on in Rønne, Svaneke, Allinge, Nexø and Hasle at', '<p>Was in Rønne, Svaneke, Allinge, Nexø und Hasle los ist, siehst du auf', '<p>Se vad som händer i Rønne, Svaneke, Allinge, Nexø och Hasle på']),
     ('<h3>Har du et arrangement i Gudhjem?</h3>', ['<h3>Have an event in Gudhjem?</h3>', '<h3>Haben Sie eine Veranstaltung in Gudhjem?</h3>', '<h3>Har du ett evenemang i Gudhjem?</h3>']),
     ('med dato, tid og sted, så kommer det med.', ['with the date, time and place, and we will add it.', 'mit Datum, Uhrzeit und Ort, dann nehmen wir es auf.', 'med datum, tid och plats, så kommer det med.']),
     ('>Skriv til <a href="mailto', ['>Write to <a href="mailto', '>Schreiben Sie an <a href="mailto', '>Skriv till <a href="mailto']),
