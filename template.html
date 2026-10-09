@@ -135,6 +135,28 @@ li.now .t::after{content:"nu";display:inline-block;margin-left:6px;font-size:.7r
 .food .tag{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--brick);border-radius:4px;padding:2px 5px;margin-right:6px;vertical-align:2px}
 
 .quiet{color:var(--muted);margin:0}
+/* Længere frem: et år frem, én foldbar række pr. måned */
+nav.days a.latr{background:transparent;border-style:dashed;color:var(--brick);font-weight:700}
+nav.days a.latr.on{background:var(--brick);border-style:solid;color:#fff}
+.later{background:var(--surface);border-radius:22px;padding:22px 20px 10px;box-shadow:0 1px 0 var(--line);scroll-margin-top:70px}
+.lhead{margin:0;font:400 clamp(1.8rem,6vw,2.4rem)/1 var(--serif)}
+.lsub{margin:8px 0 14px;color:var(--muted);font-size:.95rem}
+.month{border-top:1px solid var(--line)}
+.month summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:10px;padding:14px 2px}
+.month summary::-webkit-details-marker{display:none}
+.month summary::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .15s}
+.month[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
+.month .mn{font:400 1.35rem/1.1 var(--serif)}
+.month .my{color:var(--muted);font-size:.9rem}
+.month summary b{background:var(--sage);color:var(--ink);border-radius:999px;padding:1px 9px;font-size:.8rem}
+.lrows{list-style:none;margin:0 0 10px;padding:0}
+.lrows li{display:grid;grid-template-columns:4.6em 1fr;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.lrows li:first-child{border-top:0}
+.ld{display:grid;align-self:start;align-content:start;text-align:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px 2px 4px;line-height:1.15}
+.lwd{font-size:.72rem;font-weight:700;color:var(--brick);text-transform:capitalize}
+.ldn{font:400 1.05rem/1.2 var(--serif)}
+.lrows .what b .bird{width:24px;height:12px;margin-right:6px;vertical-align:0}
+.lrows li.own .ld{border-color:var(--coral)}
 
 footer{padding:26px 0 60px;display:grid;gap:22px;color:var(--muted);font-size:.95rem}
 .stay{background:var(--brick);color:#fff;border-radius:22px;padding:24px;position:relative;overflow:hidden}
@@ -163,7 +185,7 @@ footer p{margin:0}
   <div class="wrap">
     <div class="toprow"><p class="by chip"><svg class="bird" viewBox="0 0 1140 520" aria-hidden="true"><polyline points="500,175 320,15 15,102 298,95 450,180 225,215 110,355 295,262 790,122 1120,405 785,205 555,218 795,420 930,460 805,495 690,393 365,277"/></svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem</p><nav class="langs" aria-label="Sprog / Language">{{LANGS}}</nav></div>
     <h1>Det sker i Gudhjem</h1>
-    <p>Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.</p>
+    <p>Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver morgen.</p>
   </div>
   <svg class="town v4" viewBox="0 0 1200 380" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Tegning af Gudhjem set fra havet: Klippens hvide hotel på klipperne ved Grevens Dal med Gudhjem Mølle og kirken bagved, husene op ad bakken, Therns, Skt. Jørgens Gaard ved havnen, røgeriets gule skorstene og Christiansøbåden">
 <circle cx="1100" cy="70" r="40" fill="#f2c46b" opacity=".75"/>
@@ -245,7 +267,8 @@ footer p{margin:0}
   const mark = id => links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + id));
   if (rest[0]) mark(rest[0].id);
   const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && mark(e.target.id)), { rootMargin: "-40% 0px -55% 0px" });
-  rest.forEach(s => io.observe(s));
+  [...rest, document.getElementById("senere")].filter(Boolean).forEach(s => io.observe(s));
+  document.querySelector('nav.days a[href="#senere"]')?.addEventListener("click", () => { const m = document.querySelector("#senere details"); if (m) m.open = true; });
 })();
 </script>
 </body>

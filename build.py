@@ -12,6 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parent
 SRC = "https://therns.dk/app/gudhjem.json"
 TZ = ZoneInfo("Europe/Copenhagen")
 DAYS = 7
+LATER_DAYS = 366   # "Længere frem": et år frem, grupperet pr. måned
 BOOK = "https://www.hotelklippen.com"
 E = lambda s: html.escape(str(s or ""), quote=True)
 WD = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"]
@@ -44,6 +45,12 @@ U = {
     "Foredrag": ["Talk", "Vortrag", "Föredrag"], "Kunst og kultur": ["Art and culture", "Kunst und Kultur", "Konst och kultur"],
     "Mad og drikke": ["Food and drink", "Essen und Trinken", "Mat och dryck"], "Arrangement": ["Event", "Veranstaltung", "Evenemang"],
     "Biograf": ["Cinema", "Kino", "Bio"],
+    "Længere frem": ["Coming up", "Demnächst", "Längre fram"],
+    "Det, der allerede står i kalenderen det næste år. Der kommer flere arrangementer til løbende.": [
+        "What is already in the calendar for the coming year. More events are added all the time.",
+        "Was für das kommende Jahr schon im Kalender steht. Laufend kommen weitere Veranstaltungen dazu.",
+        "Det som redan står i kalendern det kommande året. Fler evenemang tillkommer löpande."],
+    "Intet i kalenderen længere frem endnu.": ["Nothing further ahead in the calendar yet.", "Noch nichts Weiteres im Kalender.", "Inget längre fram i kalendern ännu."],
 }
 
 def L(s):
@@ -288,9 +295,61 @@ def render_day(x, i):
     h.append("</section>")
     return "\n".join(h)
 
+def build_later(D, today):
+    """Arrangementer fra dag 8 og et år frem (byens kalender + Klippens egne), grupperet pr. måned."""
+    start, end = today + datetime.timedelta(days=DAYS), today + datetime.timedelta(days=LATER_DAYS)
+    rows = []
+    for e in D.get("town", []):
+        d1 = datetime.date.fromisoformat(e["d"]); d2 = datetime.date.fromisoformat(e.get("to") or e["d"])
+        if d1 < start or d1 > end:
+            continue
+        tt = (hm(e["t"]) + (("–" + hm(e["t2"])) if e.get("t2") else "")) if e.get("t") else ""
+        rows.append({"d": d1, "to": d2, "time": tt, "title": L(e["title"]), "where": e.get("where", ""), "url": e.get("rurl") or e.get("url"),
+                     "kind": kind_of(e), "reg": {1: L("Kræver tilmelding"), 2: L("Tilmelding til nogle aktiviteter"), 3: L("Billet på forhånd")}.get(e.get("reg"), ""), "own": False})
+    for e in D.get("events", []):
+        d1 = datetime.date.fromisoformat(e["date"]); d2 = datetime.date.fromisoformat(e.get("to") or e["date"])
+        if d1 < start or d1 > end:
+            continue
+        rows.append({"d": d1, "to": d2, "time": kl(e["time"]) if e.get("time") else "", "title": L(e["title"]), "where": L(e.get("where", "")),
+                     "url": e.get("url"), "kind": "andet", "reg": "", "own": True})
+    rows.sort(key=lambda r: (r["d"], r["time"], r["title"]))
+    months = []
+    for r in rows:
+        k = (r["d"].year, r["d"].month)
+        if not months or months[-1]["k"] != k:
+            months.append({"k": k, "rows": []})
+        months[-1]["rows"].append(r)
+    return months
+
+def render_later(months, today):
+    wd_, wds_, mon_ = DAYNAMES[LANG]
+    h = ['<section class="later" id="senere">', f'<h2 class="lhead">{L("Længere frem")}</h2>',
+         f'<p class="lsub">{L("Det, der allerede står i kalenderen det næste år. Der kommer flere arrangementer til løbende.")}</p>']
+    if not months:
+        h.append(f'<p class="quiet">{L("Intet i kalenderen længere frem endnu.")}</p>')
+    for i, m in enumerate(months):
+        y, mo = m["k"]
+        h.append(f'<details class="month"{" open" if i == 0 else ""}><summary><span class="mn">{E(mon_[mo - 1].capitalize())}</span>'
+                 f'{("<span class=my>" + str(y) + "</span>") if y != today.year else ""}<b>{len(m["rows"])}</b></summary><ol class="lrows">')
+        for r in m["rows"]:
+            d, t = r["d"], r["to"]
+            if t != d:
+                dd = (f"{d.day}.–{t.day}." if t.month == d.month else f"{d.day}/{d.month}–{t.day}/{t.month}") if LANG != "en" else (f"{d.day}–{t.day}" if t.month == d.month else f"{d.day}/{d.month}–{t.day}/{t.month}")
+                wtxt = f"{wds_[d.weekday()]}–{wds_[t.weekday()]}"
+            else:
+                dd = f"{d.day}." if LANG in ("da", "de") else str(d.day)
+                wtxt = wds_[d.weekday()]
+            reg = ('<a class="reg" href="' + E(r["url"]) + '" rel="noopener">' + E(r["reg"]) + ' ↗</a>') if r["reg"] else ""
+            where = " · ".join(x for x in (r["where"], r["time"]) if x)
+            h.append(f'<li{" class=own" if r["own"] else ""}><span class="ld"><span class="lwd">{E(wtxt)}</span><span class="ldn">{E(dd)}</span></span>'
+                     f'<span class="what"><b>{BIRD if r["own"] else ""}{link(r["title"], r["url"])}</b><span class="where">{E(where)}</span>{reg}</span></li>')
+        h.append('</ol></details>')
+    h.append('</section>')
+    return "\n".join(h)
+
 SITENAME = {"da": "Det sker i Gudhjem", "en": "What's on in Gudhjem", "de": "Was ist los in Gudhjem", "sv": "Det händer i Gudhjem"}
 
-def jsonld(days):
+def jsonld(days, later=()):
     evs = [{"@type": "WebSite", "name": SITENAME[LANG], "url": "https://detskerigudhjem.dk/" + LANG_PATH[LANG], "inLanguage": LANG,
             "publisher": {"@type": "Hotel", "name": "Klippen Hotel", "url": "https://www.hotelklippen.com/",
                           "address": {"@type": "PostalAddress", "addressLocality": "Gudhjem", "postalCode": "3760", "addressCountry": "DK"}}}]
@@ -303,7 +362,15 @@ def jsonld(days):
             evs.append({"@type": "Event", "name": it["title"], "startDate": start, "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                         "location": {"@type": "Place", "name": it["where"] or "Gudhjem", "address": {"@type": "PostalAddress", "addressLocality": "Gudhjem", "postalCode": "3760", "addressCountry": "DK"}},
                         **({"url": it["url"]} if it["url"] else {})})
-    return json.dumps({"@context": "https://schema.org", "@graph": evs[:61]}, ensure_ascii=False)
+    for m in later:
+        for r in m["rows"]:
+            mt = re.match(r"(\d+)(?:\.(\d+))?", r["time"] or "")
+            start = datetime.datetime.combine(r["d"], datetime.time(int(mt.group(1)), int(mt.group(2) or 0)), TZ).isoformat() if mt else r["d"].isoformat()
+            evs.append({"@type": "Event", "name": r["title"], "startDate": start, **({"endDate": r["to"].isoformat()} if r["to"] != r["d"] else {}),
+                        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                        "location": {"@type": "Place", "name": r["where"] or "Gudhjem", "address": {"@type": "PostalAddress", "addressLocality": "Gudhjem", "postalCode": "3760", "addressCountry": "DK"}},
+                        **({"url": r["url"]} if r["url"] else {})})
+    return json.dumps({"@context": "https://schema.org", "@graph": evs[:151]}, ensure_ascii=False)
 
 # skabelonens tekster: dansk → [en, de, sv]
 TPL = [
@@ -319,10 +386,10 @@ TPL = [
     ('content="da_DK"', ['content="en_GB"', 'content="de_DE"', 'content="sv_SE"']),
     ('</svg>Lavet af <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem', ['</svg>Made by <a href="{{BOOK}}">Klippen Hotel</a> in Gudhjem', '</svg>Von <a href="{{BOOK}}">Klippen Hotel</a> in Gudhjem', '</svg>Gjord av <a href="{{BOOK}}">Klippen Hotel</a> i Gudhjem']),
     ('<h1>Det sker i Gudhjem</h1>', ["<h1>What's on in Gudhjem</h1>", "<h1>Was ist los in Gudhjem</h1>", "<h1>Det händer i Gudhjem</h1>"]),
-    ('Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver nat.',
-     ["Films, concerts, church services, museums, the swimming pool and things for children – and where to eat. All in one place, updated every night.",
-      "Filme, Konzerte, Gottesdienste, Museen, Schwimmhalle und Kinderaktivitäten – und wo man essen kann. An einem Ort, jede Nacht aktualisiert.",
-      "Film, konserter, gudstjänster, museer, simhall och barnaktiviteter – och var du kan äta. Samlat på ett ställe och uppdaterat varje natt."]),
+    ('Film, koncerter, gudstjenester, museer, svømmehal og børneaktiviteter – og hvor du kan spise. Samlet ét sted og opdateret hver morgen.',
+     ["Films, concerts, church services, museums, the swimming pool and things for children – and where to eat. All in one place, updated every morning.",
+      "Filme, Konzerte, Gottesdienste, Museen, Schwimmhalle und Kinderaktivitäten – und wo man essen kann. An einem Ort, jeden Morgen aktualisiert.",
+      "Film, konserter, gudstjänster, museer, simhall och barnaktiviteter – och var du kan äta. Samlat på ett ställe och uppdaterat varje morgon."]),
     ('Tegning af Gudhjem set fra havet: Klippens hvide hotel på klipperne ved Grevens Dal med Gudhjem Mølle og kirken bagved, husene op ad bakken, Therns, Skt. Jørgens Gaard ved havnen, røgeriets gule skorstene og Christiansøbåden',
      ["Drawing of Gudhjem seen from the sea: Klippen's white hotel on the cliffs at Grevens Dal with Gudhjem Mill and the church behind, the houses up the hill, Therns, Skt. Jørgens Gaard by the harbour, the smokehouse's yellow chimneys and the Christiansø ferry",
       "Zeichnung von Gudhjem vom Meer aus: Klippens weißes Hotel auf den Klippen bei Grevens Dal mit der Mühle und der Kirche dahinter, die Häuser am Hang, Therns, Skt. Jørgens Gaard am Hafen, die gelben Schornsteine der Räucherei und die Christiansø-Fähre",
@@ -360,7 +427,9 @@ def main():
         days = [build_day(D, today + datetime.timedelta(days=i), places) for i in range(DAYS)]
         wd_, wds_, mon_ = DAYNAMES[LANG]
         nav = "".join(f'<a href="#d-{x["iso"]}" data-date="{x["iso"]}">{L("I dag") if i == 0 else L("I morgen") if i == 1 else wds_[x["d"].weekday()].capitalize() + " " + str(x["d"].day) + ("." if LANG in ("da", "de") else "")}</a>' for i, x in enumerate(days))
-        body = "\n".join(render_day(x, i) for i, x in enumerate(days))
+        later = build_later(D, today)
+        nav += f'<a href="#senere" class="latr">{L("Længere frem")}</a>'
+        body = "\n".join(render_day(x, i) for i, x in enumerate(days)) + "\n" + render_later(later, today)
         tpl = tpl0
         if LANG != "da":
             for da, tr in TPL:
@@ -368,7 +437,7 @@ def main():
         pre = "" if LANG == "da" else "../"
         langs = "".join(f'<a href="{(pre + LANG_PATH[l]) or "./"}" hreflang="{l}" lang="{l}" aria-current="{str(l == LANG).lower()}">{LANG_NAME[l]}</a>' for l in LANGS)
         upd = f"{mon_[today.month - 1]} {today.day}, {today.year}" if LANG == "en" else f"{today.day}. {mon_[today.month - 1]} {today.year}"
-        out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days))
+        out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days, later))
                   .replace("{{UPDATED}}", upd).replace("{{BOOK}}", BOOK_URL[LANG]).replace("{{PATH}}", LANG_PATH[LANG])
                   .replace("{{HREFLANG}}", hreflang).replace("{{LANGS}}", langs).replace("{{TODAY}}", L("I dag")).replace("{{TOMORROW}}", L("I morgen"))
                   .replace("{{SITENAME}}", SITENAME[LANG].replace('"', "&quot;")).replace("{{LANGCODE}}", LANG))
