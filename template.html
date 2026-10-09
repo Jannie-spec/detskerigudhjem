@@ -179,6 +179,7 @@ footer p{margin:0}
 }
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
+{{NEWSCSS}}
 <script src="{{UP}}samtykke.js" data-ga="G-0WECY4PB74" defer></script>
 </head>
 <body data-today="{{TODAY}}" data-tomorrow="{{TOMORROW}}">
@@ -228,6 +229,7 @@ footer p{margin:0}
 <nav class="days" aria-label="Vælg dag"><div class="wrap">{{NAV}}</div></nav>
 <div class="wrap">
 <main>
+{{NEWS}}
 {{DAYS}}
 </main>
 <footer>
@@ -276,5 +278,6 @@ footer p{margin:0}
   document.querySelector('nav.days a[href="#senere"]')?.addEventListener("click", () => { const m = document.querySelector("#senere details"); if (m) m.open = true; });
 })();
 </script>
+{{NEWSJS}}
 </body>
 </html>

@@ -19,6 +19,7 @@ WD = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"]
 WD_SHORT = ["man", "tir", "ons", "tor", "fre", "lør", "søn"]
 MON = ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"]
 MUSEUMS = ["kunst", "host", "gmus", "melg"]
+import tilmeld   # tilmelding til nyhedsbrevet (kopi af detskeri/tools/tilmeld.py)
 LANGS = ["da", "en", "de", "sv"]
 LANG = "da"
 DTR = {}   # appens oversættelser (fra gudhjem.json)
@@ -454,7 +455,8 @@ def main():
         out = (tpl.replace("{{NAV}}", nav).replace("{{DAYS}}", body).replace("{{JSONLD}}", jsonld(days, later))
                   .replace("{{UPDATED}}", upd).replace("{{BOOK}}", BOOK_URL[LANG]).replace("{{PATH}}", LANG_PATH[LANG])
                   .replace("{{HREFLANG}}", hreflang).replace("{{LANGS}}", langs).replace("{{TODAY}}", L("I dag")).replace("{{TOMORROW}}", L("I morgen"))
-                  .replace("{{SITENAME}}", SITENAME[LANG].replace('"', "&quot;")).replace("{{LANGCODE}}", LANG).replace("{{UP}}", pre))
+                  .replace("{{SITENAME}}", SITENAME[LANG].replace('"', "&quot;")).replace("{{LANGCODE}}", LANG).replace("{{UP}}", pre)
+                  .replace("{{NEWS}}", tilmeld.box("gudhjem", LANG)).replace("{{NEWSCSS}}", tilmeld.assets()[0]).replace("{{NEWSJS}}", tilmeld.assets()[1]))
         d = site / LANG_PATH[LANG]; d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(out, encoding="utf-8")
         total += sum(len(x["items"]) for x in days)
