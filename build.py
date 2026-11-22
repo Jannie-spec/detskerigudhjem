@@ -164,7 +164,10 @@ def build_day(D, d, places):
     # Hos Klippen
     klippen = []
     for key, pid in (("plateau", "plat"), ("jylkat", "jyl")):
-        v = V[key]; sl = slots_on(v, d)
+        v = V.get(key)
+        if not v:
+            continue
+        sl = slots_on(v, d)
         if sl:
             klippen.append({"name": L(v["name"]), "where": L(v["where"]), "hours": span(sl), "url": v.get("url"), "end": max(tmin(b) for _, b in sl),
                             "desc": L((next((q for q in D["places"] if q["id"] == pid), {}) or {}).get("desc") or v["where"])})
